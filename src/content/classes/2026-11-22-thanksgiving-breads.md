@@ -1,5 +1,5 @@
 ---
-title: Thanksgiving Breads and Rolls
+title: How to Make Swiss Zopf
 start: 2026-11-22T10:00:00-06:00
 durationMinutes: 240
 level: Intermediate
