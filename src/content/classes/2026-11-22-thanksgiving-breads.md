@@ -5,6 +5,8 @@ durationMinutes: 240
 level: Intermediate
 seats: 6
 seatsLeft: 0
+photo: ../../assets/photos/class-braided-rolls.jpg
+photoAlt: Golden braided rolls cooling on a rack
 price: 110
 youllMake:
   - Brown-butter Parker House rolls

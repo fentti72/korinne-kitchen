@@ -74,7 +74,7 @@ a:hover {
 }
 
 .section {
-  padding: var(--space-section) 0;
+  padding-block: var(--space-section);
 }
 
 .muted {

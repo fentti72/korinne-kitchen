@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
 import Photo from '../components/Photo.astro';
 import { site } from '../site';
+import portrait from '../assets/photos/about-portrait.jpg';
 import {
   getPosts,
   getUpcomingClasses,
@@ -24,8 +25,8 @@ const seats = nextClass && seatStatus(nextClass.data);
 ---
 
 <Base footerSignup={false}>
-  <section class="hero">
-    <div class="wrap hero__text">
+  <section class="wrap hero">
+    <div class="hero__text">
       <p class="eyebrow">{site.area.label}</p>
       <h1>Cook with me, bake with me, or just come pick up bread.</h1>
       <p class="hero__lede muted">
@@ -38,7 +39,14 @@ const seats = nextClass && seatStatus(nextClass.data);
       </div>
     </div>
     <div class="hero__photo">
-      <Photo alt="" placeholder="Korinne at work in her kitchen (full width)" ratio={16 / 10} loading="eager" />
+      <Photo
+        src={portrait}
+        alt="Korinne smiling in a dark green T-shirt"
+        placeholder="Korinne"
+        ratio={4 / 5}
+        loading="eager"
+        sizes="(min-width: 860px) 40vw, 100vw"
+      />
     </div>
   </section>
 
@@ -136,8 +144,16 @@ const seats = nextClass && seatStatus(nextClass.data);
   {
     featuredDish && (
       <section class="dark feature" aria-labelledby="feature-heading">
-        <Photo src={featuredDish.data.photo} alt={featuredDish.data.photoAlt} placeholder={`${featuredDish.data.name} (full width)`} ratio={16 / 9} />
-        <div class="wrap feature__text">
+        <div class="feature__photo">
+          <Photo
+            src={featuredDish.data.photo}
+            alt={featuredDish.data.photoAlt}
+            placeholder={featuredDish.data.name}
+            ratio={1}
+            sizes="(min-width: 860px) 55vw, 100vw"
+          />
+        </div>
+        <div class="feature__text">
           <p class="eyebrow">Signature dish</p>
           <h2 id="feature-heading">{featuredDish.data.name}</h2>
           <a href="/gallery/">See all of my signature dishes</a>
@@ -153,11 +169,17 @@ const seats = nextClass && seatStatus(nextClass.data);
 
 <style>
   .hero {
-    padding-top: clamp(2.5rem, 8vw, 5rem);
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    padding-top: clamp(2rem, 7vw, 5rem);
   }
 
-  .hero__text {
-    margin-bottom: clamp(2rem, 6vw, 3.5rem);
+  @media (min-width: 860px) {
+    .hero {
+      grid-template-columns: 3fr 2fr;
+      gap: 4rem;
+    }
   }
 
   .hero h1 {
@@ -177,8 +199,22 @@ const seats = nextClass && seatStatus(nextClass.data);
   }
 
   .hero__photo {
-    max-width: 1600px;
-    margin: 0 auto;
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  /* On phones, the photo leads and the text follows. */
+  @media (max-width: 859px) {
+    .hero__photo {
+      order: -1;
+      margin: 0 calc(-1 * var(--gutter));
+      border-radius: 0;
+    }
+
+    .hero__photo :global(img) {
+      aspect-ratio: 1 / 1 !important;
+      object-position: center 30%;
+    }
   }
 
   .upnext__grid {
@@ -239,8 +275,20 @@ const seats = nextClass && seatStatus(nextClass.data);
   }
 
   .feature__text {
-    padding-top: 2rem;
-    padding-bottom: clamp(2.5rem, 7vw, 4rem);
+    padding: 2rem var(--gutter) clamp(2.5rem, 7vw, 4rem);
+  }
+
+  /* Wide screens: photo and text side by side, so the photo isn't stretched past its size. */
+  @media (min-width: 860px) {
+    .feature {
+      display: grid;
+      grid-template-columns: 11fr 9fr;
+      align-items: center;
+    }
+
+    .feature__text {
+      padding: 3rem clamp(2rem, 5vw, 5rem);
+    }
   }
 
   .feature__text h2 {

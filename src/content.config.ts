@@ -97,8 +97,7 @@ const gallery = defineCollection({
   schema: ({ image }) =>
     z.object({
       name: z.string(),
-      // Required in the editor; optional here only until the real photos are in.
-      photo: image().optional(),
+      photo: image(),
       photoAlt: z.string(),
       order: z.number().default(0),
     }),

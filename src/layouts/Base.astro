@@ -1,7 +1,9 @@
 ---
 import '../styles/global.css';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
+import { getImage } from 'astro:assets';
 import { site } from '../site';
+import sharePhoto from '../assets/photos/about-portrait.jpg';
 
 interface Props {
   title?: string;
@@ -14,6 +16,7 @@ const { title, description = site.tagline, footerSignup = true } = Astro.props;
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.area.label}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const path = Astro.url.pathname;
+const shareImage = new URL((await getImage({ src: sharePhoto, width: 1200, format: 'jpg' })).src, Astro.site);
 
 // Business structured data: area only, never a street address.
 const business = {
@@ -46,6 +49,8 @@ const business = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:type" content="website" />
+    <meta property="og:image" content={shareImage} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#f7f1e8" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script type="application/ld+json" set:html={JSON.stringify(business)} />

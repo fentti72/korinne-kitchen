@@ -1,0 +1,374 @@
+---
+import { getCollection, render } from 'astro:content';
+import { getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Photo from '../../components/Photo.astro';
+import { site } from '../../site';
+import { formatDuration } from '../../lib/content';
+import { describe } from '../../lib/amount';
+
+export async function getStaticPaths() {
+  const recipes = await getCollection('recipes', (r) => import.meta.env.DEV || !r.data.draft);
+  return recipes.map((recipe) => ({ params: { id: recipe.id }, props: { recipe } }));
+}
+
+const { recipe } = Astro.props;
+const r = recipe.data;
+const { Content } = await render(recipe);
+const iso = (m: number) => `PT${m}M`;
+
+const ingredientText = (i: (typeof r.ingredients)[number]) => {
+  const d = describe(i);
+  return [d.qty, d.item].filter(Boolean).join(' ');
+};
+
+const photoUrl = r.photo && (await getImage({ src: r.photo, width: 1200 })).src;
+const structured = {
+  '@context': 'https://schema.org',
+  '@type': 'Recipe',
+  name: r.title,
+  description: r.summary,
+  author: { '@type': 'Person', name: site.chef },
+  ...(photoUrl ? { image: new URL(photoUrl, Astro.site).toString() } : {}),
+  recipeYield: `${r.servings} servings`,
+  prepTime: iso(r.prepMinutes),
+  cookTime: iso(r.cookMinutes),
+  totalTime: iso(r.prepMinutes + r.cookMinutes),
+  keywords: r.tags.join(', '),
+  recipeIngredient: r.ingredients.map(ingredientText),
+  recipeInstructions: r.steps.map((text) => ({ '@type': 'HowToStep', text })),
+};
+---
+
+<Base title={r.title} description={r.summary}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(structured)} />
+
+  <article class="recipe">
+    <header class="wrap recipe__head">
+      <p class="eyebrow"><a href="/recipes/">Recipes</a></p>
+      <h1>{r.title}</h1>
+      {r.summary && <p class="muted lede">{r.summary}</p>}
+      <dl class="times">
+        <div>
+          <dt>Prep</dt>
+          <dd>{formatDuration(r.prepMinutes)}</dd>
+        </div>
+        <div>
+          <dt>Cook</dt>
+          <dd>{formatDuration(r.cookMinutes)}</dd>
+        </div>
+        <div>
+          <dt>Total</dt>
+          <dd>{formatDuration(r.prepMinutes + r.cookMinutes)}</dd>
+        </div>
+      </dl>
+      {
+        r.tags.length > 0 && (
+          <ul class="tags">
+            {r.tags.map((t) => (
+              <li class="tag">{t}</li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+
+    <div class="recipe__photo">
+      <Photo src={r.photo} alt={r.photoAlt} placeholder={r.title} ratio={3 / 2} loading="eager" sizes="(min-width: 1120px) 1120px, 100vw" />
+    </div>
+
+    <div class="wrap recipe__body">
+      <section class="ingredients" aria-labelledby="ingredients-heading" data-base-servings={r.servings}>
+        <div class="ingredients__top">
+          <h2 id="ingredients-heading">Ingredients</h2>
+          <div class="servings no-print" role="group" aria-label="Servings">
+            <button type="button" class="servings__btn" data-step="-1" aria-label="Fewer servings">−</button>
+            <output class="servings__value" aria-live="polite"><span data-servings>{r.servings}</span> servings</output>
+            <button type="button" class="servings__btn" data-step="1" aria-label="More servings">+</button>
+          </div>
+          <p class="print-only">Makes <span data-servings>{r.servings}</span> servings</p>
+        </div>
+        <ul class="ingredients__list">
+          {
+            r.ingredients.map((i) => {
+              const d = describe(i);
+              return (
+                <li data-ingredient={JSON.stringify(i)}>
+                  {d.qty && <span class="qty">{d.qty}</span>} <span class="item">{d.item}</span>
+                </li>
+              );
+            })
+          }
+        </ul>
+        <button type="button" class="btn btn--ghost no-print" data-print>Print recipe</button>
+      </section>
+
+      <section class="steps" aria-labelledby="steps-heading">
+        <h2 id="steps-heading">Steps</h2>
+        <ol class="steps__list">
+          {r.steps.map((s) => <li>{s}</li>)}
+        </ol>
+        <div class="notes">
+          <Content />
+        </div>
+      </section>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .recipe__head {
+    padding-top: clamp(2.5rem, 8vw, 5rem);
+    padding-bottom: 2rem;
+  }
+
+  .lede {
+    font-size: 1.15rem;
+    max-width: var(--measure);
+  }
+
+  .times {
+    display: flex;
+    gap: 2rem;
+    margin: 1.5rem 0 1rem;
+  }
+
+  .times dt {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .times dd {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .recipe__photo {
+    max-width: var(--max);
+    margin: 0 auto;
+  }
+
+  @media (min-width: 1120px) {
+    .recipe__photo :global(img),
+    .recipe__photo :global(.photo-placeholder) {
+      border-radius: var(--radius);
+    }
+  }
+
+  .recipe__body {
+    display: grid;
+    gap: 2.5rem;
+    padding-top: 2.5rem;
+  }
+
+  @media (min-width: 860px) {
+    .recipe__body {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      gap: 4rem;
+    }
+  }
+
+  .ingredients__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .ingredients__top h2,
+  .steps h2 {
+    font-size: 1.8rem;
+    margin: 0;
+  }
+
+  .servings {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: var(--surface);
+    border-radius: 999px;
+    padding: 0.25rem;
+  }
+
+  .servings__btn {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .servings__btn:hover {
+    box-shadow: inset 0 0 0 2px var(--action);
+  }
+
+  .servings__btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .servings__value {
+    min-width: 7.5rem;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .ingredients__list {
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+  }
+
+  .ingredients__list li {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .qty {
+    font-weight: 600;
+  }
+
+  .steps h2 {
+    margin-bottom: 1rem;
+  }
+
+  .steps__list {
+    margin: 0 0 2rem;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+  }
+
+  .steps__list li {
+    counter-increment: step;
+    position: relative;
+    padding: 0 0 1.25rem 2.75rem;
+  }
+
+  .steps__list li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--surface);
+    font: 600 0.95rem var(--font-sans);
+  }
+
+  .notes {
+    color: var(--text-muted);
+  }
+
+  .print-only {
+    display: none;
+  }
+
+  /* Clean printout: just the recipe, black on white, no photo or site chrome. */
+  @media print {
+    :global(.site-header),
+    :global(.site-footer),
+    :global(.skip),
+    .no-print,
+    .recipe__photo,
+    .eyebrow {
+      display: none !important;
+    }
+
+    :global(body) {
+      background: none;
+      color: var(--text);
+      font-size: 11pt;
+    }
+
+    .print-only {
+      display: block;
+      margin: 0;
+    }
+
+    .recipe__head {
+      padding-top: 0;
+      padding-bottom: 1rem;
+    }
+
+    .recipe__body {
+      display: block;
+      padding-top: 0;
+    }
+
+    .ingredients {
+      margin-bottom: 1.5rem;
+    }
+
+    .ingredients__list li {
+      padding: 0.2rem 0;
+      border: 0;
+    }
+
+    .steps__list li {
+      break-inside: avoid;
+    }
+
+    .steps__list li::before {
+      background: none;
+      border: 1px solid var(--text);
+    }
+
+    .muted,
+    .notes,
+    .times dt {
+      color: var(--text);
+    }
+
+    .tag {
+      background: none;
+      color: var(--text);
+      padding: 0;
+    }
+
+    .tag:not(:last-child)::after {
+      content: ',';
+    }
+  }
+</style>
+
+<script>
+  import { describe } from '../../lib/amount';
+
+  const section = document.querySelector<HTMLElement>('[data-base-servings]');
+  if (section) {
+    const base = Number(section.dataset.baseServings);
+    let servings = base;
+    const minus = section.querySelector<HTMLButtonElement>('[data-step="-1"]')!;
+
+    const render = () => {
+      section.querySelectorAll('[data-servings]').forEach((el) => (el.textContent = String(servings)));
+      section.querySelectorAll<HTMLElement>('[data-ingredient]').forEach((li) => {
+        const d = describe(JSON.parse(li.dataset.ingredient!), servings / base);
+        const qty = li.querySelector('.qty');
+        if (qty) qty.textContent = d.qty;
+        li.querySelector('.item')!.textContent = d.item;
+      });
+      minus.disabled = servings <= 1;
+    };
+
+    section.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        servings = Math.max(1, Math.min(48, servings + Number(btn.dataset.step)));
+        render();
+      }),
+    );
+  }
+
+  document.querySelector('[data-print]')?.addEventListener('click', () => window.print());
+</script>

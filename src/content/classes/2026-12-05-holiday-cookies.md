@@ -4,6 +4,8 @@ start: 2026-12-05T13:00:00-06:00
 durationMinutes: 150
 level: All levels
 seats: 10
+photo: ../../assets/photos/about-portrait-standing.jpg
+photoAlt: Korinne smiling, hand on hip
 price: 85
 youllMake:
   - Brown-butter chocolate chip cookies

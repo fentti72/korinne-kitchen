@@ -1,0 +1,100 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Photo from '../../components/Photo.astro';
+import { formatDuration } from '../../lib/content';
+
+const recipes = (await getCollection('recipes', (r) => import.meta.env.DEV || !r.data.draft)).sort((a, b) =>
+  a.data.title.localeCompare(b.data.title),
+);
+---
+
+<Base title="My Favorite Recipes" description="Korinne's favorite recipes to cook and bake at home.">
+  <header class="wrap intro">
+    <p class="eyebrow">Recipes</p>
+    <h1>My favorite recipes</h1>
+    <p class="muted lede">The things I make again and again at home. Scale them to your table and print them for the kitchen.</p>
+  </header>
+
+  <ul class="wrap recipes">
+    {
+      recipes.map((r) => (
+        <li class="recipe-card surface">
+          <a class="recipe-card__link" href={`/recipes/${r.id}/`}>
+            <Photo src={r.data.photo} alt={r.data.photoAlt} placeholder={r.data.title} sizes="(min-width: 760px) 50vw, 100vw" />
+            <div class="recipe-card__body">
+              <h2>{r.data.title}</h2>
+              <p class="muted">
+                {formatDuration(r.data.prepMinutes + r.data.cookMinutes)} · Serves {r.data.servings}
+              </p>
+            </div>
+          </a>
+          {r.data.tags.length > 0 && (
+            <ul class="tags recipe-card__tags">
+              {r.data.tags.map((t) => (
+                <li class="tag">{t}</li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</Base>
+
+<style>
+  .intro {
+    padding-top: clamp(2.5rem, 8vw, 5rem);
+    padding-bottom: clamp(1.5rem, 5vw, 3rem);
+  }
+
+  .lede {
+    font-size: 1.15rem;
+    max-width: var(--measure);
+  }
+
+  .recipes {
+    list-style: none;
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  @media (min-width: 760px) {
+    .recipes {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .recipe-card {
+    overflow: hidden;
+  }
+
+  .recipe-card__link {
+    display: block;
+    text-decoration: none;
+  }
+
+  .surface .recipe-card__link {
+    color: var(--text);
+  }
+
+  .recipe-card__body {
+    padding: 1.25rem 1.5rem 0;
+  }
+
+  .recipe-card h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .recipe-card__link:hover h2 {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .recipe-card__tags {
+    padding: 0 1.5rem 1.5rem;
+  }
+</style>

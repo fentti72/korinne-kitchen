@@ -3,6 +3,8 @@ import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Photo from '../components/Photo.astro';
 import { site } from '../site';
+import poster from '../assets/photos/about-school-poster.jpg';
+import chefWhites from '../assets/photos/about-chef-whites.jpg';
 import { getUpcomingClasses, seatStatus, formatDay, formatTime, formatDuration, TZ } from '../lib/content';
 
 const classes = await Promise.all(
@@ -52,12 +54,24 @@ const events = classes.map(({ c, seats }) => ({
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(events)} />
 
   <header class="wrap intro">
-    <p class="eyebrow">In-person classes · {site.area.label}</p>
-    <h1>Take a class</h1>
-    <p class="muted lede">
-      Small groups in my home kitchen. You'll cook with your own hands, eat well, and take home what you make. The exact
-      address and parking notes come in your confirmation email.
-    </p>
+    <div class="intro__text">
+      <p class="eyebrow">In-person classes · {site.area.label}</p>
+      <h1>Take a class</h1>
+      <p class="muted lede">
+        Small groups in my home kitchen. You'll cook with your own hands, eat well, and take home what you make. The
+        exact address and parking notes come in your confirmation email.
+      </p>
+    </div>
+    <div class="intro__photo">
+      <Photo
+        src={poster}
+        alt="Korinne in chef whites, pointing to a culinary school poster that shows her teaching a class"
+        placeholder="Korinne teaching"
+        ratio={5 / 6}
+        loading="eager"
+        sizes="(min-width: 860px) 40vw, 100vw"
+      />
+    </div>
   </header>
 
   <div class="wrap">
@@ -180,6 +194,16 @@ const events = classes.map(({ c, seats }) => ({
 
   <section class="wrap section private" aria-labelledby="private-heading">
     <div class="surface private__box">
+      <div class="private__photo">
+        <Photo
+          src={chefWhites}
+          alt="Korinne in chef whites holding a fruit tart"
+          placeholder="Korinne in chef whites"
+          ratio={4 / 5}
+          sizes="(min-width: 860px) 30vw, 100vw"
+        />
+      </div>
+      <div>
       <h2 id="private-heading">Private group classes</h2>
       <p class="muted">
         Birthdays, team outings, or just a group of friends. Tell me a little about what you have in mind and I'll get
@@ -208,14 +232,30 @@ const events = classes.map(({ c, seats }) => ({
         </div>
         <button class="btn" type="submit">Send inquiry</button>
       </form>
+      </div>
     </div>
   </section>
 </Base>
 
 <style>
   .intro {
-    padding-top: clamp(2.5rem, 8vw, 5rem);
-    padding-bottom: clamp(1.5rem, 5vw, 3rem);
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    padding-top: clamp(2rem, 7vw, 5rem);
+    padding-bottom: clamp(2rem, 6vw, 4rem);
+  }
+
+  @media (min-width: 860px) {
+    .intro {
+      grid-template-columns: 3fr 2fr;
+      gap: 4rem;
+    }
+  }
+
+  .intro__photo {
+    border-radius: var(--radius);
+    overflow: hidden;
   }
 
   .lede {
@@ -387,7 +427,22 @@ const events = classes.map(({ c, seats }) => ({
   }
 
   .private__box {
+    display: grid;
+    gap: 2rem;
     padding: clamp(1.5rem, 5vw, 3rem);
+  }
+
+  @media (min-width: 860px) {
+    .private__box {
+      grid-template-columns: 2fr 3fr;
+      gap: 3rem;
+      align-items: start;
+    }
+  }
+
+  .private__photo {
+    border-radius: calc(var(--radius) - 4px);
+    overflow: hidden;
   }
 
   .private__form {

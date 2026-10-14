@@ -79,6 +79,15 @@ const dishes = await Promise.all(
     .gallery {
       grid-template-columns: 1fr 1fr;
     }
+
+    /* An odd dish out fills the last row as a wide photo instead of leaving a gap. */
+    .gallery > li:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+
+    .gallery > li:last-child:nth-child(odd) :global(img) {
+      aspect-ratio: 2 / 1 !important;
+    }
   }
 
   .dish {
