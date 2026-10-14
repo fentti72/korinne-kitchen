@@ -1,5 +1,5 @@
 import { defineCollection } from 'astro:content';
-import { glob } from 'astro/loaders';
+import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
 const level = z.enum(['Beginner', 'Intermediate', 'Advanced', 'All levels']);
@@ -57,7 +57,11 @@ const bakes = defineCollection({
             description: z.string().default(''),
             price: z.number().nonnegative(),
             quantity: z.number().int().positive(),
+            // Set by hand until the order system reports it live.
+            left: z.number().int().nonnegative().optional(),
             perOrderLimit: z.number().int().positive().default(2),
+            photo: image().optional(),
+            photoAlt: z.string().default(''),
           }),
         )
         .min(1),
@@ -103,4 +107,14 @@ const gallery = defineCollection({
     }),
 });
 
-export const collections = { posts, classes, bakes, recipes, gallery };
+const policies = defineCollection({
+  loader: file('src/data/policies.yaml'),
+  schema: z.object({
+    title: z.string(),
+    group: z.enum(['classes', 'bake']),
+    order: z.number().default(0),
+    body: z.string(),
+  }),
+});
+
+export const collections = { posts, classes, bakes, recipes, gallery, policies };

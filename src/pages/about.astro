@@ -1,0 +1,266 @@
+---
+import Base from '../layouts/Base.astro';
+import Photo from '../components/Photo.astro';
+import NextStep from '../components/NextStep.astro';
+import { site } from '../site';
+import portrait from '../assets/photos/about-portrait-standing.jpg';
+import graduation from '../assets/photos/about-graduation.jpg';
+import chefWhites from '../assets/photos/about-chef-whites.jpg';
+import mixing from '../assets/photos/about-mixing.jpg';
+import cake from '../assets/photos/about-chocolate-cake.jpg';
+
+// PLACEHOLDER COPY throughout: written in Korinne's voice as a starting point for her to rewrite.
+const principles = [
+  {
+    title: 'Cook with your hands',
+    body: 'You learn more from one batch of dough you shaped yourself than from ten videos. In my classes, everyone cooks.',
+  },
+  {
+    title: 'Bake what the season gives you',
+    body: 'Strawberries in spring, pecans in fall. The menu follows what tastes best right now.',
+  },
+  {
+    title: 'Small batches, done right',
+    body: "I'd rather make twelve loaves I'm proud of than fifty I'm not. That's why the bake menu is short and sells out.",
+  },
+];
+---
+
+<Base title="About Me" description={`Korinne is a chef and baker in ${site.area.label} who teaches hands-on cooking classes.`}>
+  <section class="wrap hero">
+    <div class="hero__text">
+      <p class="eyebrow">About me</p>
+      <h1>Hi, I'm {site.chef}.</h1>
+      <p class="lede">
+        PLACEHOLDER — I'm a chef and baker in {site.area.city}. I teach small, hands-on classes in my kitchen and bake a
+        short menu most weeks for pickup. Mostly, I love feeding people and showing them they can do it too.
+      </p>
+    </div>
+    <div class="hero__photo">
+      <Photo
+        src={portrait}
+        alt="Korinne smiling, hand on her hip, in a dark green T-shirt"
+        placeholder="Korinne"
+        ratio={4 / 5}
+        loading="eager"
+        sizes="(min-width: 860px) 40vw, 100vw"
+      />
+    </div>
+  </section>
+
+  <section class="wrap section chapter">
+    <div class="chapter__photo">
+      <Photo
+        src={graduation}
+        alt="Korinne in chef whites receiving her culinary school certificate from an instructor"
+        placeholder="Graduation"
+        ratio={4 / 5}
+        sizes="(min-width: 860px) 45vw, 100vw"
+      />
+    </div>
+    <div class="chapter__text">
+      <h2>How I got here</h2>
+      <p>
+        PLACEHOLDER — I grew up baking birthday cakes for anyone who'd let me. Years later I finally went to culinary
+        school and learned the why behind everything I'd been doing by feel.
+      </p>
+      <p>
+        PLACEHOLDER — The day I got that certificate, I knew I wanted to spend my time in a kitchen, and to bring other
+        people in with me.
+      </p>
+    </div>
+  </section>
+
+  <section class="dark band">
+    <div class="wrap band__inner">
+      <div class="band__text">
+        <h2>What I believe about cooking</h2>
+        <ol class="principles">
+          {
+            principles.map((p) => (
+              <li>
+                <h3>{p.title}</h3>
+                <p class="muted">{p.body}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+      <div class="band__photo">
+        <Photo
+          src={chefWhites}
+          alt="Korinne in chef whites holding a fruit tart"
+          placeholder="Korinne in chef whites"
+          ratio={4 / 5}
+          position="center top"
+          sizes="(min-width: 860px) 35vw, 100vw"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section chapter chapter--flip">
+    <div class="chapter__photo">
+      <Photo
+        src={mixing}
+        alt="Korinne smiling as she mixes batter in a glass bowl at home"
+        placeholder="Korinne at home"
+        ratio={4 / 5}
+        sizes="(min-width: 860px) 45vw, 100vw"
+      />
+    </div>
+    <div class="chapter__text">
+      <h2>My kitchen now</h2>
+      <p>
+        PLACEHOLDER — These days I cook from my home kitchen in {site.area.city}. It's where I test recipes, run my
+        classes, and bake the weekly menu. Kitchen Notes is where I share what I'm working on.
+      </p>
+      <p><a href="/kitchen-notes/">Read Kitchen Notes</a></p>
+    </div>
+  </section>
+
+  <div class="wrap cta-wrap">
+  <section class="cta surface" aria-labelledby="cta-heading">
+    <div class="cta__photo">
+      <Photo
+        src={cake}
+        alt="Korinne holding a tall chocolate layer cake topped with truffles and toffee"
+        placeholder="Korinne with a cake"
+        ratio={1}
+        sizes="(min-width: 760px) 30vw, 100vw"
+      />
+    </div>
+    <div>
+      <h2 id="cta-heading">Come cook with me</h2>
+      <p class="muted">The best way to get to know me is in the kitchen. Classes are small and fill up fast.</p>
+      <div class="cta__actions">
+        <a class="btn" href="/classes/">Book a class</a>
+        <a class="btn btn--ghost" href="/bake/">Order this week's bake</a>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <div class="wrap section">
+    <NextStep heading="Coming up" />
+  </div>
+</Base>
+
+<style>
+  .hero {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    padding-top: clamp(2rem, 7vw, 5rem);
+  }
+
+  @media (min-width: 860px) {
+    .hero {
+      grid-template-columns: 3fr 2fr;
+      gap: 4rem;
+    }
+  }
+
+  .lede {
+    font-size: 1.25rem;
+    max-width: var(--measure);
+  }
+
+  .hero__photo,
+  .chapter__photo,
+  .band__photo,
+  .cta__photo {
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  @media (max-width: 859px) {
+    .hero__photo {
+      order: -1;
+    }
+  }
+
+  .chapter {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  @media (min-width: 860px) {
+    .chapter {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+
+    .chapter--flip .chapter__photo {
+      order: 2;
+    }
+  }
+
+  .chapter__text p {
+    max-width: var(--measure);
+    font-size: 1.1rem;
+  }
+
+  .band {
+    padding-block: var(--space-section);
+  }
+
+  .band__inner {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 860px) {
+    .band__inner {
+      grid-template-columns: 3fr 2fr;
+      gap: 4rem;
+    }
+  }
+
+  .principles {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .principles h3 {
+    margin-bottom: 0.3rem;
+  }
+
+  .principles p {
+    margin: 0;
+  }
+
+  .cta {
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+    padding: clamp(1.5rem, 5vw, 3rem);
+  }
+
+  .cta-wrap {
+    margin-top: var(--space-section);
+  }
+
+  @media (min-width: 760px) {
+    .cta {
+      grid-template-columns: 1fr 2fr;
+      gap: 3rem;
+    }
+  }
+
+  .cta__photo {
+    max-width: 22rem;
+  }
+
+  .cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+</style>

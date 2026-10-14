@@ -50,3 +50,21 @@ export function seatStatus(c: { seats: number; seatsLeft?: number }) {
 export async function getGallery() {
   return (await getCollection('gallery')).sort((a, b) => a.data.order - b.data.order);
 }
+
+/** Stock status for a bake drop item. */
+export function itemStatus(i: { quantity: number; left?: number }) {
+  const left = i.left ?? i.quantity;
+  const badge = left === 0 ? 'Sold out' : left <= 3 ? `Only ${left} left` : undefined;
+  return { left, soldOut: left === 0, badge };
+}
+
+export async function getPolicies(group: 'classes' | 'bake') {
+  return (await getCollection('policies', (p) => p.data.group === group)).sort((a, b) => a.data.order - b.data.order);
+}
+
+/** Every tag in use, most-used first. */
+export function getAllTags(posts: { data: { tags: string[] } }[]) {
+  const counts = new Map<string, number>();
+  posts.forEach((p) => p.data.tags.forEach((t) => counts.set(t, (counts.get(t) ?? 0) + 1)));
+  return [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([t]) => t);
+}

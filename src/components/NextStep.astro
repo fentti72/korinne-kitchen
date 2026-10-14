@@ -1,0 +1,107 @@
+---
+// A small "what to do next" block for the end of content pages: the next class and the current bake.
+import Photo from './Photo.astro';
+import { getUpcomingClasses, getCurrentBake, seatStatus, formatDay, formatTime } from '../lib/content';
+
+interface Props {
+  heading?: string;
+}
+
+const { heading = 'Come cook with me' } = Astro.props;
+const [nextClass] = await getUpcomingClasses();
+const bake = await getCurrentBake();
+const seats = nextClass && seatStatus(nextClass.data);
+---
+
+<section class="next" aria-labelledby="next-heading">
+  <h2 id="next-heading">{heading}</h2>
+  <div class="next__grid">
+    {
+      nextClass && seats && (
+        <a class="next__item surface" href={`/classes/#${nextClass.id}`}>
+          <Photo src={nextClass.data.photo} alt="" placeholder={nextClass.data.title} ratio={1} sizes="120px" widths={[240]} />
+          <span class="next__text">
+            <span class="eyebrow">Next class</span>
+            <span class="next__title">{nextClass.data.title}</span>
+            <span class="muted">
+              {formatDay(nextClass.data.start)} · {formatTime(nextClass.data.start)}
+            </span>
+            {seats.badge && <span class="badge">{seats.badge}</span>}
+          </span>
+        </a>
+      )
+    }
+    {
+      bake && (
+        <a class="next__item surface" href="/bake/">
+          <Photo src={bake.data.photo} alt="" placeholder="This week's bake" ratio={1} sizes="120px" widths={[240]} />
+          <span class="next__text">
+            <span class="eyebrow">This week's bake</span>
+            <span class="next__title">{bake.data.items.map((i) => i.name).join(' · ')}</span>
+            <span class="muted">Pickup only · order by {formatDay(bake.data.ordersClose)}</span>
+          </span>
+        </a>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .next h2 {
+    font-size: clamp(1.5rem, 4.5vw, 2rem);
+  }
+
+  .next__grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 760px) {
+    .next__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .next__item {
+    display: grid;
+    grid-template-columns: 112px 1fr;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.75rem;
+    text-decoration: none;
+    color: var(--text);
+  }
+
+  .surface.next__item {
+    color: var(--text);
+  }
+
+  .next__item :global(img),
+  .next__item :global(.photo-placeholder) {
+    border-radius: calc(var(--radius) - 4px);
+  }
+
+  .next__text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+  }
+
+  .next__text .eyebrow {
+    margin: 0;
+  }
+
+  .next__title {
+    font: 500 1.15rem/1.25 var(--font-serif);
+  }
+
+  .next__item:hover .next__title {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .next__text .muted {
+    font-size: 0.92rem;
+  }
+</style>

@@ -12,6 +12,8 @@ interface Props {
   sizes?: string;
   widths?: number[];
   loading?: 'lazy' | 'eager';
+  /** Which part of the photo to keep when cropping, e.g. 'center top' for portraits. */
+  position?: string;
   class?: string;
 }
 
@@ -23,6 +25,7 @@ const {
   sizes = '100vw',
   widths = [480, 800, 1200, 1600, 2000],
   loading = 'lazy',
+  position = 'center',
   class: className,
 } = Astro.props;
 ---
@@ -36,7 +39,7 @@ const {
       sizes={sizes}
       loading={loading}
       class={className}
-      style={`aspect-ratio:${ratio};object-fit:cover;width:100%`}
+      style={`aspect-ratio:${ratio};object-fit:cover;object-position:${position};width:100%`}
     />
   ) : (
     <div class:list={['photo-placeholder', className]} style={`--ratio:${ratio}`} role="img" aria-label={alt || placeholder}>

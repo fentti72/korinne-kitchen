@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Photo from '../components/Photo.astro';
+import Policies from '../components/Policies.astro';
 import { site } from '../site';
 import poster from '../assets/photos/about-school-poster.jpg';
 import chefWhites from '../assets/photos/about-chef-whites.jpg';
@@ -171,26 +172,9 @@ const events = classes.map(({ c, seats }) => ({
     }
   </div>
 
-  <section class="wrap section policies" aria-labelledby="policies-heading">
-    <h2 id="policies-heading">Before you book</h2>
-    <div class="policy-grid">
-      <div class="surface policy">
-        <h3>Cancellations</h3>
-        <p>PLACEHOLDER: Full refund up to 7 days before class. After that, you can send a friend in your place.</p>
-      </div>
-      <div class="surface policy">
-        <h3>Allergies and diets</h3>
-        <p>
-          PLACEHOLDER: You'll be asked about allergies and dietary needs at checkout. My kitchen handles wheat, dairy, eggs,
-          and nuts, so I can't promise an allergen-free space.
-        </p>
-      </div>
-      <div class="surface policy">
-        <h3>Ages</h3>
-        <p>PLACEHOLDER: Each class lists a minimum age. Under 18s come with a paying adult.</p>
-      </div>
-    </div>
-  </section>
+  <div class="wrap section">
+    <Policies group="classes" heading="Before you book" />
+  </div>
 
   <section class="wrap section private" aria-labelledby="private-heading">
     <div class="surface private__box">
@@ -397,29 +381,6 @@ const events = classes.map(({ c, seats }) => ({
   label {
     font-weight: 600;
     font-size: 0.95rem;
-  }
-
-  .policy-grid {
-    display: grid;
-    gap: 1rem;
-  }
-
-  @media (min-width: 860px) {
-    .policy-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .policy {
-    padding: 1.5rem;
-  }
-
-  .policy h3 {
-    font-size: 1.25rem;
-  }
-
-  .policy p {
-    margin: 0;
   }
 
   .private {

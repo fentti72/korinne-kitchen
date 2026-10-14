@@ -1,0 +1,123 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Photo from './Photo.astro';
+import { formatDate } from '../lib/content';
+
+interface Props {
+  posts: CollectionEntry<'posts'>[];
+  allTags: string[];
+  activeTag?: string;
+}
+
+const { posts, allTags, activeTag } = Astro.props;
+---
+
+<nav class="filters" aria-label="Filter by tag">
+  <ul class="tags">
+    <li>
+      <a class="tag" href="/kitchen-notes/" aria-current={activeTag ? undefined : 'page'}>All</a>
+    </li>
+    {
+      allTags.map((t) => (
+        <li>
+          <a class="tag" href={`/kitchen-notes/tag/${t}/`} aria-current={t === activeTag ? 'page' : undefined}>
+            {t}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<ol class="feed">
+  {
+    posts.map((post, i) => (
+      <li class:list={['post', { 'post--lead': i === 0 }]}>
+        <a class="post__link" href={`/kitchen-notes/${post.id}/`}>
+          <Photo
+            src={post.data.photo}
+            alt={post.data.photoAlt}
+            placeholder={post.data.title}
+            ratio={i === 0 ? 3 / 2 : 4 / 3}
+            loading={i < 2 ? 'eager' : 'lazy'}
+            sizes={i === 0 ? '(min-width: 1120px) 1120px, 100vw' : '(min-width: 760px) 50vw, 100vw'}
+          />
+          <span class="eyebrow post__date">{formatDate(post.data.date)}</span>
+          <span class="post__title">{post.data.title}</span>
+        </a>
+        {post.data.tags.length > 0 && (
+          <ul class="tags">
+            {post.data.tags.map((t) => (
+              <li>
+                <a class="tag" href={`/kitchen-notes/tag/${t}/`}>
+                  {t}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .filters {
+    margin-bottom: 2rem;
+  }
+
+  .filters .tag[aria-current='page'] {
+    background: var(--tag-text);
+    color: var(--tag-bg);
+  }
+
+  .feed {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 3rem 1.5rem;
+  }
+
+  @media (min-width: 760px) {
+    .feed {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .post--lead {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .post__link {
+    display: block;
+    color: var(--text);
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+  }
+
+  .post__link :global(img),
+  .post__link :global(.photo-placeholder) {
+    border-radius: var(--radius);
+  }
+
+  .post__date {
+    display: block;
+    margin: 1rem 0 0.3rem;
+  }
+
+  .post__title {
+    display: block;
+    font: 500 1.6rem/1.2 var(--font-serif);
+  }
+
+  .post--lead .post__title {
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+  }
+
+  .post__link:hover .post__title {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    text-decoration-thickness: 2px;
+  }
+</style>

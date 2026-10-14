@@ -1,0 +1,56 @@
+---
+import { getPolicies } from '../lib/content';
+
+interface Props {
+  group: 'classes' | 'bake';
+  heading: string;
+}
+
+const { group, heading } = Astro.props;
+const policies = await getPolicies(group);
+const id = `policies-${group}`;
+---
+
+<section class="policies" aria-labelledby={id}>
+  <h2 id={id}>{heading}</h2>
+  <div class="policy-grid">
+    {
+      policies.map((p) => (
+        <div class="surface policy">
+          <h3>{p.data.title}</h3>
+          <p>{p.data.body}</p>
+        </div>
+      ))
+    }
+  </div>
+  <p class="more"><a href="/policies/">All policies</a></p>
+</section>
+
+<style>
+  .policy-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 860px) {
+    .policy-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .policy {
+    padding: 1.5rem;
+  }
+
+  .policy h3 {
+    font-size: 1.25rem;
+  }
+
+  .policy p {
+    margin: 0;
+  }
+
+  .more {
+    margin: 1rem 0 0;
+  }
+</style>

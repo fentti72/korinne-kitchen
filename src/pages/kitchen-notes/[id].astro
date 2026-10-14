@@ -1,0 +1,146 @@
+---
+import { render } from 'astro:content';
+import { getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Photo from '../../components/Photo.astro';
+import NextStep from '../../components/NextStep.astro';
+import { site } from '../../site';
+import { getPosts, formatDate } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post, i) => ({ params: { id: post.id }, props: { post, older: posts[i + 1] } }));
+}
+
+const { post, older } = Astro.props;
+const { Content } = await render(post);
+const p = post.data;
+const excerpt = post.body?.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\s+/g, ' ').trim().slice(0, 155);
+
+const photoUrl = p.photo && (await getImage({ src: p.photo, width: 1200 })).src;
+const structured = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: p.title,
+  datePublished: p.date.toISOString(),
+  author: { '@type': 'Person', name: site.chef },
+  ...(photoUrl ? { image: new URL(photoUrl, Astro.site).toString() } : {}),
+  keywords: p.tags.join(', '),
+};
+---
+
+<Base title={p.title} description={excerpt}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(structured)} />
+
+  <article>
+    <header class="wrap head">
+      <p class="eyebrow"><a href="/kitchen-notes/">Kitchen Notes</a> · {formatDate(p.date)}</p>
+      <h1>{p.title}</h1>
+      {
+        p.tags.length > 0 && (
+          <ul class="tags">
+            {p.tags.map((t) => (
+              <li>
+                <a class="tag" href={`/kitchen-notes/tag/${t}/`}>
+                  {t}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+
+    {
+      p.photo && (
+        <div class="cover">
+          <Photo src={p.photo} alt={p.photoAlt} placeholder={p.title} ratio={3 / 2} loading="eager" sizes="(min-width: 1120px) 1120px, 100vw" />
+        </div>
+      )
+    }
+
+    <div class="wrap">
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+
+  <div class="wrap section after">
+    <NextStep heading="Cook with me in person" />
+    {
+      older && (
+        <p class="older">
+          Older note: <a href={`/kitchen-notes/${older.id}/`}>{older.data.title}</a>
+        </p>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .head {
+    padding-top: clamp(2.5rem, 8vw, 5rem);
+    padding-bottom: 2rem;
+  }
+
+  .head h1 {
+    max-width: 20ch;
+  }
+
+  .cover {
+    max-width: var(--max);
+    margin: 0 auto 2.5rem;
+  }
+
+  @media (min-width: 1120px) {
+    .cover :global(img) {
+      border-radius: var(--radius);
+    }
+  }
+
+  .prose {
+    max-width: var(--measure);
+    margin: 0 auto;
+    font-size: 1.1rem;
+  }
+
+  .prose :global(img) {
+    width: 100%;
+    border-radius: var(--radius);
+  }
+
+  /* Photos in a post sit two to a row on wider screens; text keeps a readable width. */
+  @media (min-width: 640px) {
+    .prose {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 1rem;
+      max-width: 52rem;
+    }
+
+    .prose > :global(*) {
+      grid-column: 1 / -1;
+      max-width: var(--measure);
+    }
+
+    .prose > :global(p:has(> img:only-child)) {
+      grid-column: auto;
+      max-width: none;
+    }
+
+    .prose > :global(p:has(> img:only-child) img) {
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+    }
+  }
+
+  .after {
+    border-top: 1px solid var(--line);
+    margin-top: var(--space-section);
+  }
+
+  .older {
+    margin-top: 2rem;
+  }
+</style>

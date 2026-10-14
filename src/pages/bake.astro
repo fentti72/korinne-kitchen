@@ -1,0 +1,434 @@
+---
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Photo from '../components/Photo.astro';
+import Policies from '../components/Policies.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+import { site } from '../site';
+import { getCurrentBake, itemStatus, formatDay, formatTime } from '../lib/content';
+
+const bake = await getCurrentBake();
+const Notes = bake && (await render(bake)).Content;
+const items = bake?.data.items.map((item, i) => ({ item, i, status: itemStatus(item) })) ?? [];
+---
+
+<Base
+  title="What I'm Baking"
+  description={`This week's small-batch bake menu, pickup only in ${site.area.label}.`}
+  footerSignup={!bake}
+>
+  {
+    !bake ? (
+      <div class="wrap intro">
+        <p class="eyebrow">What I'm baking</p>
+        <h1>No bake menu this week</h1>
+        <p class="muted lede">The next menu goes to the newsletter first.</p>
+      </div>
+    ) : (
+      <>
+        <section class="wrap intro">
+          <div class="intro__text">
+            <p class="eyebrow">What I'm baking · Pickup only in {site.area.city}</p>
+            <h1>{bake.data.title}</h1>
+            <p
+              class="status"
+              data-bake-status
+              data-open={bake.data.ordersOpen.toISOString()}
+              data-close={bake.data.ordersClose.toISOString()}
+            >
+              Orders open {formatDay(bake.data.ordersOpen)}, {formatTime(bake.data.ordersOpen)} and close{' '}
+              {formatDay(bake.data.ordersClose)}, {formatTime(bake.data.ordersClose)}.
+            </p>
+            <div class="notes muted">{Notes && <Notes />}</div>
+            <h2 class="eyebrow">Pickup windows</h2>
+            <ul class="windows">
+              {bake.data.pickupWindows.map((w) => (
+                <li>{w}</li>
+              ))}
+            </ul>
+            <p class="muted small">The pickup address comes in your confirmation email.</p>
+          </div>
+          <div class="intro__photo">
+            <Photo
+              src={bake.data.photo}
+              alt={bake.data.photoAlt}
+              placeholder="This week's bake"
+              ratio={4 / 3}
+              loading="eager"
+              sizes="(min-width: 860px) 45vw, 100vw"
+            />
+          </div>
+        </section>
+
+        <form class="wrap order" data-order aria-labelledby="menu-heading">
+          <h2 id="menu-heading">The menu</h2>
+          <ul class="bake-menu">
+            {items.map(({ item, i, status }) => (
+              <li class="item surface">
+                <Photo src={item.photo} alt={item.photoAlt} placeholder={item.name} ratio={4 / 3} sizes="(min-width: 860px) 33vw, 100vw" />
+                <div class="item__body">
+                  <div class="item__top">
+                    <h3>{item.name}</h3>
+                    <p class="item__price">${item.price}</p>
+                  </div>
+                  {item.description && <p class="muted">{item.description}</p>}
+                  <p class="item__meta">
+                    {status.badge && <span class="badge">{status.badge}</span>}
+                    {!status.soldOut && <span class="muted small">Limit {item.perOrderLimit} per order</span>}
+                  </p>
+                  {status.soldOut ? (
+                    <details class="waitlist">
+                      <summary class="btn btn--ghost">Join the waitlist</summary>
+                      <div class="waitlist__form">
+                        <label for={`wl-${i}`}>Email me if one frees up</label>
+                        <div class="inline-field">
+                          <input id={`wl-${i}`} type="email" name={`waitlist-${i}`} autocomplete="email" />
+                          <button class="btn" type="button" data-waitlist>
+                            Add me
+                          </button>
+                        </div>
+                      </div>
+                    </details>
+                  ) : (
+                    <div class="qty" role="group" aria-label={`Quantity of ${item.name}`}>
+                      <button type="button" class="qty__btn" data-dec aria-label={`One fewer ${item.name}`}>
+                        −
+                      </button>
+                      <output class="qty__value" aria-live="polite">
+                        <span data-qty>0</span> in your order
+                      </output>
+                      <button type="button" class="qty__btn" data-inc aria-label={`One more ${item.name}`}>
+                        +
+                      </button>
+                      <input
+                        type="hidden"
+                        name={`item-${i}`}
+                        value="0"
+                        data-max={Math.min(item.perOrderLimit, status.left)}
+                        data-price={item.price}
+                      />
+                    </div>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <div class="checkout surface">
+            <div class="field">
+              <label for="pickup">Pickup window</label>
+              <select id="pickup" name="pickup" required>
+                {bake.data.pickupWindows.map((w) => (
+                  <option>{w}</option>
+                ))}
+              </select>
+            </div>
+            <p class="total">
+              Total <strong data-total>$0</strong>
+            </p>
+            <button class="btn" type="submit" data-checkout disabled>
+              Order for pickup
+            </button>
+            <p class="muted small checkout__note" data-checkout-note>
+              Add something from the menu to order.
+            </p>
+          </div>
+        </form>
+
+        <div class="wrap section">
+          <Policies group="bake" heading="Pickup and policies" />
+        </div>
+
+        <div class="wrap">
+          <NewsletterSignup heading="Get next week's menu first" />
+        </div>
+      </>
+    )
+  }
+</Base>
+
+<style>
+  .intro {
+    display: grid;
+    gap: 2rem;
+    align-items: start;
+    padding-top: clamp(2rem, 7vw, 5rem);
+    padding-bottom: clamp(2rem, 6vw, 4rem);
+  }
+
+  @media (min-width: 860px) {
+    .intro {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+  }
+
+  @media (max-width: 859px) {
+    .intro__photo {
+      order: -1;
+    }
+  }
+
+  .intro__photo {
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .lede {
+    font-size: 1.15rem;
+  }
+
+  .status {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .windows {
+    margin: 0 0 0.5rem;
+    padding-left: 1.2rem;
+  }
+
+  .small {
+    font-size: 0.9rem;
+  }
+
+  .bake-menu {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 860px) {
+    .bake-menu {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .item {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .item__body {
+    padding: 1.25rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .item__top {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: baseline;
+  }
+
+  .item h3 {
+    margin: 0 0 0.4rem;
+  }
+
+  .item__price {
+    font-weight: 600;
+    font-size: 1.15rem;
+    margin: 0;
+  }
+
+  .item__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .qty,
+  .waitlist {
+    margin-top: auto;
+  }
+
+  .qty {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg);
+    border-radius: 999px;
+    padding: 0.25rem;
+  }
+
+  .qty__btn {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--action);
+    color: var(--action-text);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .qty__btn:hover {
+    background: var(--action-hover);
+  }
+
+  .qty__btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .qty__value {
+    font-weight: 600;
+  }
+
+  .waitlist summary {
+    list-style: none;
+  }
+
+  .waitlist summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .waitlist__form {
+    margin-top: 1rem;
+  }
+
+  .inline-field {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+  }
+
+  input[type='email'],
+  select {
+    flex: 1 1 12rem;
+    width: 100%;
+    min-height: 48px;
+    padding: 0.6rem 1rem;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+  }
+
+  label {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  /* Order bar: sticks to the bottom of the screen on phones so the total and button are always in reach. */
+  .checkout {
+    display: grid;
+    gap: 0.75rem;
+    padding: 1rem var(--gutter);
+    margin-top: 1.5rem;
+    position: sticky;
+    bottom: 0;
+    z-index: 4;
+    border-radius: var(--radius) var(--radius) 0 0;
+    box-shadow: 0 -1px 0 var(--line-strong);
+  }
+
+  @media (min-width: 760px) {
+    .checkout {
+      grid-template-columns: 2fr 1fr auto;
+      align-items: end;
+      padding: 1.25rem 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: none;
+      position: static;
+    }
+
+    .checkout__note {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .field {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .total {
+    margin: 0;
+    font-size: 1.1rem;
+    align-self: center;
+  }
+
+  .checkout__note {
+    margin: 0;
+  }
+</style>
+
+<script>
+  // The page is prebuilt, so whether ordering is open is worked out in the visitor's browser.
+  const statusEl = document.querySelector<HTMLElement>('[data-bake-status]');
+  const form = document.querySelector<HTMLFormElement>('[data-order]');
+  if (statusEl && form) {
+    const open = new Date(statusEl.dataset.open!);
+    const close = new Date(statusEl.dataset.close!);
+    const now = new Date();
+    const when = (d: Date) =>
+      d.toLocaleString('en-US', { timeZone: 'America/Chicago', weekday: 'long', hour: 'numeric', minute: '2-digit' });
+    const isOpen = now >= open && now < close;
+    statusEl.textContent =
+      now < open
+        ? `Orders open ${when(open)}.`
+        : isOpen
+          ? `Ordering now · closes ${when(close)}.`
+          : 'Orders are closed for this week. The next menu goes to the newsletter first.';
+
+    const checkout = form.querySelector<HTMLButtonElement>('[data-checkout]')!;
+    const note = form.querySelector<HTMLElement>('[data-checkout-note]')!;
+    const totalEl = form.querySelector<HTMLElement>('[data-total]')!;
+    const inputs = [...form.querySelectorAll<HTMLInputElement>('input[data-max]')];
+
+    const update = () => {
+      let total = 0;
+      let count = 0;
+      for (const input of inputs) {
+        const q = Number(input.value);
+        const max = Number(input.dataset.max);
+        const group = input.closest('.qty')!;
+        group.querySelector('[data-qty]')!.textContent = String(q);
+        group.querySelector<HTMLButtonElement>('[data-dec]')!.disabled = !isOpen || q <= 0;
+        group.querySelector<HTMLButtonElement>('[data-inc]')!.disabled = !isOpen || q >= max;
+        total += q * Number(input.dataset.price);
+        count += q;
+      }
+      totalEl.textContent = `$${total}`;
+      checkout.disabled = !isOpen || count === 0;
+      note.textContent = !isOpen
+        ? 'Ordering is closed right now.'
+        : count === 0
+          ? 'Add something from the menu to order.'
+          : 'You’ll pay on the next screen. Your pickup address comes by email.';
+    };
+
+    for (const input of inputs) {
+      const group = input.closest('.qty')!;
+      group.querySelector('[data-inc]')!.addEventListener('click', () => {
+        input.value = String(Math.min(Number(input.dataset.max), Number(input.value) + 1));
+        update();
+      });
+      group.querySelector('[data-dec]')!.addEventListener('click', () => {
+        input.value = String(Math.max(0, Number(input.value) - 1));
+        update();
+      });
+    }
+
+    // Checkout and the waitlist get connected once the Stripe and email accounts exist.
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Ordering opens soon. Checkout is not connected yet.');
+    });
+    form.querySelectorAll('[data-waitlist]').forEach((b) =>
+      b.addEventListener('click', () => alert('The waitlist is not connected yet.')),
+    );
+    update();
+  }
+</script>

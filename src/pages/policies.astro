@@ -1,0 +1,68 @@
+---
+import Base from '../layouts/Base.astro';
+import { getPolicies } from '../lib/content';
+
+const groups = [
+  { heading: 'Classes', link: '/classes/', cta: 'See upcoming classes', policies: await getPolicies('classes') },
+  { heading: 'Bake drops and pickup', link: '/bake/', cta: "See this week's bake", policies: await getPolicies('bake') },
+];
+---
+
+<Base title="Policies" description="Cancellation, allergy, age, and pickup policies for classes and bake drops.">
+  <div class="wrap page">
+    <p class="eyebrow">Policies</p>
+    <h1>The fine print</h1>
+    <p class="muted lede">Short and plain. If anything here doesn't fit your situation, just ask.</p>
+    {
+      groups.map((g) => (
+        <section class="group">
+          <h2>{g.heading}</h2>
+          <dl>
+            {g.policies.map((p) => (
+              <div class="policy">
+                <dt>{p.data.title}</dt>
+                <dd>{p.data.body}</dd>
+              </div>
+            ))}
+          </dl>
+          <a class="btn btn--ghost" href={g.link}>
+            {g.cta}
+          </a>
+        </section>
+      ))
+    }
+  </div>
+</Base>
+
+<style>
+  .page {
+    padding-top: clamp(2.5rem, 8vw, 5rem);
+    max-width: calc(44rem + 2 * var(--gutter));
+  }
+
+  .lede {
+    font-size: 1.15rem;
+  }
+
+  .group {
+    margin-top: 3rem;
+  }
+
+  dl {
+    margin: 0 0 1.5rem;
+  }
+
+  .policy {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  dt {
+    font: 500 1.25rem var(--font-serif);
+    margin-bottom: 0.3rem;
+  }
+
+  dd {
+    margin: 0;
+  }
+</style>

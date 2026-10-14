@@ -1,0 +1,31 @@
+# Policies shown on the Classes, Bake, and Policies pages. Edit them in the site editor.
+class-cancellations:
+  title: Cancellations
+  group: classes
+  order: 1
+  body: PLACEHOLDER — Full refund up to 7 days before class. After that, you can send a friend in your place.
+class-allergies:
+  title: Allergies and diets
+  group: classes
+  order: 2
+  body: PLACEHOLDER — You'll be asked about allergies and dietary needs at checkout. My kitchen handles wheat, dairy, eggs, and nuts, so I can't promise an allergen-free space.
+class-ages:
+  title: Ages
+  group: classes
+  order: 3
+  body: PLACEHOLDER — Each class lists a minimum age. Anyone under 18 comes with a paying adult.
+bake-pickup:
+  title: Pickup
+  group: bake
+  order: 1
+  body: PLACEHOLDER — Pickup only, in Flower Mound, during the window you choose at checkout. The address and pickup instructions come in your confirmation email.
+bake-no-shows:
+  title: Missed pickups
+  group: bake
+  order: 2
+  body: PLACEHOLDER — If you can't make your window, reply to your confirmation email before it starts and I'll do my best. Orders not picked up by the end of the day are donated, and aren't refunded.
+bake-allergens:
+  title: Allergens
+  group: bake
+  order: 3
+  body: PLACEHOLDER — Everything is baked in a home kitchen that handles wheat, dairy, eggs, and nuts.

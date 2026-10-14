@@ -69,7 +69,10 @@ content:
           - { name: description, label: Description, type: string }
           - { name: price, label: Price ($), type: number, required: true }
           - { name: quantity, label: How many you're making, type: number, required: true }
+          - { name: left, label: How many are left (until ordering is connected), type: number }
           - { name: perOrderLimit, label: Limit per order, type: number, default: 2 }
+          - { name: photo, label: Photo, type: image }
+          - { name: photoAlt, label: Describe the photo, type: string }
       - { name: photo, label: Photo, type: image }
       - { name: photoAlt, label: Describe the photo, type: string }
       - { name: draft, label: Draft (hide from site), type: boolean }
@@ -112,3 +115,22 @@ content:
       - { name: photoAlt, label: Describe the photo, type: string, required: true }
       - { name: order, label: Display order, type: number }
       - { name: body, label: The story behind it, type: rich-text }
+
+  - name: policies
+    label: Policies
+    type: file
+    path: src/data/policies.yaml
+    fields:
+      - name: class-cancellations
+        label: Class cancellations
+        type: object
+        fields: &policy
+          - { name: title, label: Heading, type: string, required: true }
+          - { name: group, label: Shown on, type: select, options: { values: [classes, bake] }, required: true }
+          - { name: order, label: Order, type: number }
+          - { name: body, label: Policy, type: text, required: true }
+      - { name: class-allergies, label: Class allergies and diets, type: object, fields: *policy }
+      - { name: class-ages, label: Class ages, type: object, fields: *policy }
+      - { name: bake-pickup, label: Bake pickup, type: object, fields: *policy }
+      - { name: bake-no-shows, label: Bake missed pickups, type: object, fields: *policy }
+      - { name: bake-allergens, label: Bake allergens, type: object, fields: *policy }
