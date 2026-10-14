@@ -17,6 +17,12 @@ interface Props {
   class?: string;
 }
 
+// Photos of people keep the top of the frame (their face) when cropped; food stays centered.
+const FOCUS: [RegExp, string][] = [
+  [/about-portrait-standing/, 'center 30%'],
+  [/(about-|class-mixing)/, 'center top'],
+];
+
 const {
   src,
   alt,
@@ -25,7 +31,7 @@ const {
   sizes = '100vw',
   widths = [480, 800, 1200, 1600, 2000],
   loading = 'lazy',
-  position = 'center',
+  position = FOCUS.find(([pattern]) => src && pattern.test(src.src))?.[1] ?? 'center',
   class: className,
 } = Astro.props;
 ---
