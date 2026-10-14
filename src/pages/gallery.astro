@@ -1,0 +1,176 @@
+---
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Photo from '../components/Photo.astro';
+import { getGallery } from '../lib/content';
+
+const dishes = await Promise.all(
+  (await getGallery()).map(async (dish) => ({ dish, Story: (await render(dish)).Content })),
+);
+---
+
+<Base title="Signature Dishes" description="Korinne's signature dishes, and the stories behind them.">
+  <div class="dark gallery-page">
+    <header class="wrap gallery-intro">
+      <p class="eyebrow">Signature dishes</p>
+      <h1>The dishes I'm proudest of</h1>
+      <p class="muted">Tap a dish for the story behind it.</p>
+    </header>
+
+    <ul class="gallery">
+      {
+        dishes.map(({ dish }) => (
+          <li>
+            <button class="dish" type="button" data-dish={dish.id} aria-haspopup="dialog">
+              <Photo
+                src={dish.data.photo}
+                alt={dish.data.photoAlt}
+                placeholder={dish.data.name}
+                ratio={4 / 5}
+                sizes="(min-width: 760px) 50vw, 100vw"
+              />
+              <span class="dish__name">{dish.data.name}</span>
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+
+    {
+      dishes.map(({ dish, Story }) => (
+        <dialog class="story dark" id={`story-${dish.id}`} aria-labelledby={`story-${dish.id}-title`}>
+          <form method="dialog">
+            <button class="story__close" aria-label="Close">
+              ×
+            </button>
+          </form>
+          <Photo src={dish.data.photo} alt={dish.data.photoAlt} placeholder={dish.data.name} ratio={3 / 2} sizes="(min-width: 760px) 720px, 100vw" />
+          <div class="story__text">
+            <h2 id={`story-${dish.id}-title`}>{dish.data.name}</h2>
+            <Story />
+            <a class="btn" href="/classes/">
+              Book a class
+            </a>
+          </div>
+        </dialog>
+      ))
+    }
+  </div>
+</Base>
+
+<style>
+  .gallery-page {
+    padding-top: clamp(2.5rem, 8vw, 5rem);
+  }
+
+  .gallery-intro {
+    padding-bottom: clamp(2rem, 6vw, 3.5rem);
+  }
+
+  .gallery {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+
+  @media (min-width: 760px) {
+    .gallery {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .dish {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .dish:focus-visible {
+    outline-offset: -6px;
+  }
+
+  .dish__name {
+    display: block;
+    padding: 0.9rem var(--gutter) 1.4rem;
+    font: 500 1.35rem/1.25 var(--font-serif);
+  }
+
+  .dish:hover .dish__name {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  /* Story pop-up */
+  .story {
+    width: min(720px, 100vw);
+    max-height: 100dvh;
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius);
+    overflow: auto;
+  }
+
+  @media (max-width: 759px) {
+    .story {
+      width: 100vw;
+      height: 100dvh;
+      max-width: none;
+      border-radius: 0;
+    }
+  }
+
+  .story::backdrop {
+    background: rgb(46 36 32 / 0.85); /* espresso */
+  }
+
+  .story__close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 1;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--surface-dark);
+    color: var(--text-on-dark);
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .story__text {
+    padding: 1.75rem var(--gutter) 2.5rem;
+  }
+
+  .story__text :global(p) {
+    color: var(--text-on-dark-muted);
+    max-width: var(--measure);
+  }
+
+  .story__text .btn {
+    margin-top: 1rem;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-dish]').forEach((btn) => {
+    const dialog = document.getElementById(`story-${btn.dataset.dish}`) as HTMLDialogElement | null;
+    btn.addEventListener('click', () => dialog?.showModal());
+  });
+  // Close when tapping the dimmed area outside the story.
+  document.querySelectorAll<HTMLDialogElement>('dialog.story').forEach((dialog) => {
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  });
+</script>

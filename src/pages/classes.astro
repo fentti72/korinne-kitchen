@@ -1,0 +1,425 @@
+---
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Photo from '../components/Photo.astro';
+import { site } from '../site';
+import { getUpcomingClasses, seatStatus, formatDay, formatTime, formatDuration, TZ } from '../lib/content';
+
+const classes = await Promise.all(
+  (await getUpcomingClasses()).map(async (c) => ({ c, seats: seatStatus(c.data), Body: (await render(c)).Content })),
+);
+
+// Group by month for a calendar-style list.
+const monthOf = (d: Date) => new Intl.DateTimeFormat('en-US', { timeZone: TZ, month: 'long', year: 'numeric' }).format(d);
+const months = [...new Set(classes.map(({ c }) => monthOf(c.data.start)))].map((month) => ({
+  month,
+  items: classes.filter(({ c }) => monthOf(c.data.start) === month),
+}));
+
+// Event structured data: area only, never the street address.
+const events = classes.map(({ c, seats }) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: c.data.title,
+  startDate: c.data.start.toISOString(),
+  endDate: new Date(c.data.start.valueOf() + c.data.durationMinutes * 60_000).toISOString(),
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  eventStatus: 'https://schema.org/EventScheduled',
+  location: {
+    '@type': 'Place',
+    name: `${site.name}, ${site.area.label}`,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: site.area.city,
+      addressRegion: site.area.region,
+      addressCountry: site.area.country,
+    },
+  },
+  organizer: { '@type': 'Person', name: site.chef, url: Astro.site?.toString() },
+  offers: {
+    '@type': 'Offer',
+    price: c.data.price,
+    priceCurrency: 'USD',
+    availability: seats.soldOut ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
+    url: new URL(`/classes/#${c.id}`, Astro.site).toString(),
+  },
+  maximumAttendeeCapacity: c.data.seats,
+  description: c.data.youllMake.join('; '),
+}));
+---
+
+<Base title="Take a Class" description={`Small, hands-on cooking and baking classes in ${site.area.label}.`}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(events)} />
+
+  <header class="wrap intro">
+    <p class="eyebrow">In-person classes · {site.area.label}</p>
+    <h1>Take a class</h1>
+    <p class="muted lede">
+      Small groups in my home kitchen. You'll cook with your own hands, eat well, and take home what you make. The exact
+      address and parking notes come in your confirmation email.
+    </p>
+  </header>
+
+  <div class="wrap">
+    {
+      months.length === 0 && (
+        <p class="surface empty">
+          No classes on the calendar right now. <a href="#signup-heading">Join the newsletter</a> to hear about the next
+          ones first.
+        </p>
+      )
+    }
+    {
+      months.map(({ month, items }) => (
+        <section class="month" aria-labelledby={`m-${month.replace(/\W/g, '')}`}>
+          <h2 class="month__title" id={`m-${month.replace(/\W/g, '')}`}>
+            {month}
+          </h2>
+          {items.map(({ c, seats, Body }) => (
+            <article class="class surface" id={c.id}>
+              <Photo src={c.data.photo} alt={c.data.photoAlt} placeholder={`${c.data.title}`} ratio={3 / 2} sizes="(min-width: 860px) 50vw, 100vw" />
+              <div class="class__body">
+                <p class="class__when">
+                  {formatDay(c.data.start)} · {formatTime(c.data.start)}
+                </p>
+                <h3>{c.data.title}</h3>
+                {seats.badge && <span class="badge">{seats.badge}</span>}
+
+                <h4>What you'll make</h4>
+                <ul class="make">
+                  {c.data.youllMake.map((m) => (
+                    <li>{m}</li>
+                  ))}
+                </ul>
+
+                <dl class="facts">
+                  <div>
+                    <dt>Length</dt>
+                    <dd>{formatDuration(c.data.durationMinutes)}</dd>
+                  </div>
+                  <div>
+                    <dt>Skill level</dt>
+                    <dd>{c.data.level}</dd>
+                  </div>
+                  <div>
+                    <dt>Group size</dt>
+                    <dd>Up to {c.data.seats}</dd>
+                  </div>
+                  <div>
+                    <dt>Seats left</dt>
+                    <dd>{seats.soldOut ? 'None' : seats.left}</dd>
+                  </div>
+                  {c.data.minAge && (
+                    <div>
+                      <dt>Ages</dt>
+                      <dd>{c.data.minAge}+</dd>
+                    </div>
+                  )}
+                  <div>
+                    <dt>Price</dt>
+                    <dd>${c.data.price} per person</dd>
+                  </div>
+                </dl>
+
+                <p>
+                  <strong>You take home:</strong> {c.data.takeHome}
+                </p>
+                <p>
+                  <strong>Bring:</strong> {c.data.bring}
+                </p>
+                <div class="class__notes muted">
+                  <Body />
+                </div>
+
+                {seats.soldOut ? (
+                  <details class="waitlist">
+                    <summary class="btn">Join the waitlist</summary>
+                    <form class="waitlist__form" method="post" data-waitlist={c.id}>
+                      <label for={`wl-${c.id}`}>Email me if a seat opens up</label>
+                      <div class="inline-field">
+                        <input id={`wl-${c.id}`} type="email" name="email" required autocomplete="email" />
+                        <button class="btn" type="submit">
+                          Add me
+                        </button>
+                      </div>
+                    </form>
+                  </details>
+                ) : (
+                  <button class="btn" type="button" data-book={c.id}>
+                    Book a seat · ${c.data.price}
+                  </button>
+                )}
+              </div>
+            </article>
+          ))}
+        </section>
+      ))
+    }
+  </div>
+
+  <section class="wrap section policies" aria-labelledby="policies-heading">
+    <h2 id="policies-heading">Before you book</h2>
+    <div class="policy-grid">
+      <div class="surface policy">
+        <h3>Cancellations</h3>
+        <p>PLACEHOLDER: Full refund up to 7 days before class. After that, you can send a friend in your place.</p>
+      </div>
+      <div class="surface policy">
+        <h3>Allergies and diets</h3>
+        <p>
+          PLACEHOLDER: You'll be asked about allergies and dietary needs at checkout. My kitchen handles wheat, dairy, eggs,
+          and nuts, so I can't promise an allergen-free space.
+        </p>
+      </div>
+      <div class="surface policy">
+        <h3>Ages</h3>
+        <p>PLACEHOLDER: Each class lists a minimum age. Under 18s come with a paying adult.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section private" aria-labelledby="private-heading">
+    <div class="surface private__box">
+      <h2 id="private-heading">Private group classes</h2>
+      <p class="muted">
+        Birthdays, team outings, or just a group of friends. Tell me a little about what you have in mind and I'll get
+        back to you.
+      </p>
+      <form class="private__form" method="post" name="private-class">
+        <div class="field">
+          <label for="pc-name">Your name</label>
+          <input id="pc-name" name="name" required autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="pc-email">Email</label>
+          <input id="pc-email" type="email" name="email" required autocomplete="email" />
+        </div>
+        <div class="field">
+          <label for="pc-size">Group size</label>
+          <input id="pc-size" type="number" name="size" min="2" max="12" inputmode="numeric" />
+        </div>
+        <div class="field">
+          <label for="pc-dates">Dates that work</label>
+          <input id="pc-dates" name="dates" />
+        </div>
+        <div class="field field--wide">
+          <label for="pc-notes">What would you like to cook or bake?</label>
+          <textarea id="pc-notes" name="notes" rows="4"></textarea>
+        </div>
+        <button class="btn" type="submit">Send inquiry</button>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .intro {
+    padding-top: clamp(2.5rem, 8vw, 5rem);
+    padding-bottom: clamp(1.5rem, 5vw, 3rem);
+  }
+
+  .lede {
+    font-size: 1.15rem;
+    max-width: var(--measure);
+  }
+
+  .empty {
+    padding: 1.5rem;
+  }
+
+  .month {
+    margin-bottom: 3rem;
+  }
+
+  .month__title {
+    font-size: 1.1rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 1.5rem;
+  }
+
+  .class {
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    scroll-margin-top: 80px;
+  }
+
+  @media (min-width: 860px) {
+    .class {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .class > :first-child {
+      height: 100%;
+    }
+  }
+
+  .class__body {
+    padding: 1.5rem;
+  }
+
+  @media (min-width: 860px) {
+    .class__body {
+      padding: 2.25rem;
+    }
+  }
+
+  .class__when {
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+
+  .class h3 {
+    font-size: clamp(1.6rem, 4.5vw, 2rem);
+    margin-bottom: 0.6rem;
+  }
+
+  h4 {
+    font: 600 0.8rem/1.4 var(--font-sans);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 1.5rem 0 0.5rem;
+  }
+
+  .make {
+    margin: 0 0 1.25rem;
+    padding-left: 1.2rem;
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.9rem 1.25rem;
+    margin: 0 0 1.25rem;
+    padding: 1rem 0;
+    border-block: 1px solid var(--line-strong);
+  }
+
+  @media (min-width: 520px) {
+    .facts {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .facts dt {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .facts dd {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .class__notes :global(p) {
+    font-size: 0.95rem;
+  }
+
+  .waitlist summary {
+    list-style: none;
+  }
+
+  .waitlist summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .waitlist__form {
+    margin-top: 1rem;
+  }
+
+  .inline-field {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+  }
+
+  input,
+  textarea {
+    flex: 1 1 14rem;
+    width: 100%;
+    min-height: 48px;
+    padding: 0.6rem 1rem;
+    border: 1.5px solid var(--text-muted);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+  }
+
+  label {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .policy-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 860px) {
+    .policy-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .policy {
+    padding: 1.5rem;
+  }
+
+  .policy h3 {
+    font-size: 1.25rem;
+  }
+
+  .policy p {
+    margin: 0;
+  }
+
+  .private {
+    padding-top: 0;
+  }
+
+  .private__box {
+    padding: clamp(1.5rem, 5vw, 3rem);
+  }
+
+  .private__form {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  @media (min-width: 760px) {
+    .private__form {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .field--wide,
+    .private__form .btn {
+      grid-column: 1 / -1;
+    }
+
+    .private__form .btn {
+      justify-self: start;
+    }
+  }
+
+  .field {
+    display: grid;
+    gap: 0.35rem;
+  }
+</style>
+
+<script>
+  // Booking and the waitlist get connected once the Stripe and email accounts exist.
+  document.querySelectorAll<HTMLButtonElement>('[data-book]').forEach((btn) =>
+    btn.addEventListener('click', () => alert('Booking opens soon. Checkout is not connected yet.')),
+  );
+</script>

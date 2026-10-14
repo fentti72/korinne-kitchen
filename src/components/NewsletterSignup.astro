@@ -10,45 +10,56 @@ const {
   heading = 'Get the Sunday letter',
   blurb = 'New classes, the weekly bake menu before it sells out, and what’s on the stove. About once a week.',
 } = Astro.props;
+const id = 'signup';
 ---
 
-<section class="signup" aria-labelledby="signup-heading">
-  <h2 id="signup-heading">{heading}</h2>
-  <p>{blurb}</p>
+<section class="signup surface" aria-labelledby={`${id}-heading`}>
+  <h2 id={`${id}-heading`}>{heading}</h2>
+  <p class="muted">{blurb}</p>
   <form method="post" action={site.newsletterAction || undefined} class="signup__form">
-    <label class="visually-hidden" for="signup-email">Email address</label>
-    <input id="signup-email" type="email" name="email" required autocomplete="email" placeholder="you@example.com" />
-    <button class="btn" type="submit">Sign up</button>
+    <label class="visually-hidden" for={`${id}-email`}>Email address</label>
+    <input id={`${id}-email`} type="email" name="email" required autocomplete="email" placeholder="you@example.com" />
+    <button class="btn" type="submit">Join the newsletter</button>
   </form>
 </section>
 
 <style>
   .signup {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 1.5rem;
+    padding: clamp(1.5rem, 5vw, 3rem);
+  }
+
+  .signup h2 {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
   }
 
   .signup p {
-    color: var(--muted);
-    margin: 0 0 1rem;
+    max-width: var(--measure);
   }
 
   .signup__form {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+    max-width: 34rem;
   }
 
   input {
-    flex: 1 1 14rem;
-    min-height: 44px;
-    padding: 0 1rem;
-    border: 1px solid var(--line);
+    flex: 1 1 15rem;
+    min-height: 48px;
+    padding: 0 1.1rem;
+    border: 1.5px solid var(--text-muted);
     border-radius: 999px;
-    font: inherit;
     background: var(--bg);
-    color: var(--ink);
+    color: var(--text);
+    font: inherit;
+  }
+
+  input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .btn {
+    flex: 0 0 auto;
   }
 </style>

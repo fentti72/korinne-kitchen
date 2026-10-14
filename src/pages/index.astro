@@ -1,11 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
+import Photo from '../components/Photo.astro';
 import { site } from '../site';
 import {
   getPosts,
   getUpcomingClasses,
   getCurrentBake,
+  getGallery,
+  seatStatus,
   formatDay,
   formatTime,
   formatDuration,
@@ -15,177 +18,233 @@ import {
 const [latestPost] = await getPosts();
 const [nextClass] = await getUpcomingClasses();
 const bake = await getCurrentBake();
+const [featuredDish] = await getGallery();
 const fromPrice = bake && Math.min(...bake.data.items.map((i) => i.price));
+const seats = nextClass && seatStatus(nextClass.data);
 ---
 
 <Base footerSignup={false}>
   <section class="hero">
-    <div class="wrap">
+    <div class="wrap hero__text">
       <p class="eyebrow">{site.area.label}</p>
       <h1>Cook with me, bake with me, or just come pick up bread.</h1>
-      <p class="hero__lede">
+      <p class="hero__lede muted">
         I'm {site.chef}. I teach small, hands-on cooking and baking classes and put out a short bake menu most weeks,
         all for pickup in {site.area.city}.
       </p>
       <div class="hero__actions">
-        {nextClass && <a class="btn" href="/classes/">See upcoming classes</a>}
-        <a class="btn btn--ghost" href="/bake/">This week's bake</a>
+        <a class="btn" href="/classes/">Book a class</a>
+        <a class="btn btn--ghost" href="/bake/">Order this week's bake</a>
       </div>
+    </div>
+    <div class="hero__photo">
+      <Photo alt="" placeholder="Korinne at work in her kitchen (full width)" ratio={16 / 10} loading="eager" />
     </div>
   </section>
 
-  <section class="wrap upnext" aria-labelledby="upnext-heading">
-    <h2 id="upnext-heading" class="eyebrow">Up next</h2>
+  <section class="wrap section upnext" aria-labelledby="upnext-heading">
+    <h2 id="upnext-heading">Up next</h2>
     <div class="upnext__grid">
-      <article class="card">
-        <p class="card__kicker">Next class</p>
-        {
-          nextClass ? (
-            <>
-              <h3>
-                <a href="/classes/">{nextClass.data.title}</a>
-              </h3>
-              <p class="card__meta">
+      {
+        nextClass && seats ? (
+          <article class="card surface">
+            <Photo src={nextClass.data.photo} alt={nextClass.data.photoAlt} placeholder="the class dish" sizes="(min-width: 860px) 33vw, 100vw" />
+            <div class="card__body">
+              <p class="eyebrow">Next class</p>
+              <h3>{nextClass.data.title}</h3>
+              <p class="card__meta muted">
                 {formatDay(nextClass.data.start)} · {formatTime(nextClass.data.start)} ·{' '}
                 {formatDuration(nextClass.data.durationMinutes)}
               </p>
-              <p class="card__meta">
-                {nextClass.data.level} · ${nextClass.data.price} · {nextClass.data.seats} seats
+              <p class="card__meta muted">
+                {nextClass.data.level} · ${nextClass.data.price}
               </p>
-              <a class="card__cta" href="/classes/">
-                Book a seat →
+              {seats.badge && <span class="badge">{seats.badge}</span>}
+              <a class="btn card__cta" href="/classes/">
+                {seats.soldOut ? 'Join the waitlist' : 'Book a class'}
               </a>
-            </>
-          ) : (
-            <>
+            </div>
+          </article>
+        ) : (
+          <article class="card surface">
+            <div class="card__body">
+              <p class="eyebrow">Classes</p>
               <h3>New classes coming soon</h3>
-              <p class="card__meta">Newsletter subscribers hear first.</p>
-              <a class="card__cta" href="#signup-heading">
-                Get notified →
+              <p class="card__meta muted">Newsletter subscribers hear first.</p>
+              <a class="btn card__cta" href="#signup-heading">
+                Join the newsletter
               </a>
-            </>
-          )
-        }
-      </article>
+            </div>
+          </article>
+        )
+      }
 
       {
         bake && (
           <article
-            class="card"
+            class="card surface"
             data-bake
             data-open={bake.data.ordersOpen.toISOString()}
             data-close={bake.data.ordersClose.toISOString()}
           >
-            <p class="card__kicker">This week's bake</p>
-            <h3>
-              <a href="/bake/">{bake.data.items.map((i) => i.name).join(', ')}</a>
-            </h3>
-            <p class="card__meta">From ${fromPrice} · Pickup only</p>
-            <p class="card__meta" data-bake-status>
-              Orders close {formatDay(bake.data.ordersClose)}, {formatTime(bake.data.ordersClose)}
-            </p>
-            <a class="card__cta" href="/bake/" data-bake-cta>
-              See the menu →
-            </a>
+            <Photo src={bake.data.photo} alt={bake.data.photoAlt} placeholder="this week's bake" sizes="(min-width: 860px) 33vw, 100vw" />
+            <div class="card__body">
+              <p class="eyebrow">This week's bake</p>
+              <h3>{bake.data.items.map((i) => i.name).join(' · ')}</h3>
+              <p class="card__meta muted">From ${fromPrice} · Pickup only</p>
+              <p class="card__meta muted" data-bake-status>
+                Orders close {formatDay(bake.data.ordersClose)}, {formatTime(bake.data.ordersClose)}
+              </p>
+              <a class="btn card__cta" href="/bake/" data-bake-cta>
+                Order this week's bake
+              </a>
+            </div>
           </article>
         )
       }
 
       {
         latestPost && (
-          <article class="card">
-            <p class="card__kicker">Latest from Kitchen Notes</p>
-            <h3>
-              <a href={`/kitchen-notes/${latestPost.id}/`}>{latestPost.data.title}</a>
-            </h3>
-            <p class="card__meta">{formatDate(latestPost.data.date)}</p>
-            <a class="card__cta" href="/kitchen-notes/">
-              More notes →
-            </a>
+          <article class="card surface">
+            <Photo src={latestPost.data.photo} alt={latestPost.data.photoAlt} placeholder="from the latest post" sizes="(min-width: 860px) 33vw, 100vw" />
+            <div class="card__body">
+              <p class="eyebrow">Kitchen Notes · {formatDate(latestPost.data.date)}</p>
+              <h3>
+                <a class="card__title-link" href={`/kitchen-notes/${latestPost.id}/`}>
+                  {latestPost.data.title}
+                </a>
+              </h3>
+              <ul class="tags">
+                {latestPost.data.tags.map((t) => (
+                  <li>
+                    <a class="tag" href={`/kitchen-notes/tag/${t}/`}>
+                      {t}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <a class="card__link" href="/kitchen-notes/">
+                Read more Kitchen Notes
+              </a>
+            </div>
           </article>
         )
       }
     </div>
   </section>
 
-  <div class="wrap signup-wrap">
+  {
+    featuredDish && (
+      <section class="dark feature" aria-labelledby="feature-heading">
+        <Photo src={featuredDish.data.photo} alt={featuredDish.data.photoAlt} placeholder={`${featuredDish.data.name} (full width)`} ratio={16 / 9} />
+        <div class="wrap feature__text">
+          <p class="eyebrow">Signature dish</p>
+          <h2 id="feature-heading">{featuredDish.data.name}</h2>
+          <a href="/gallery/">See all of my signature dishes</a>
+        </div>
+      </section>
+    )
+  }
+
+  <div class="wrap section">
     <NewsletterSignup />
   </div>
 </Base>
 
 <style>
   .hero {
-    padding: 3rem 0 2rem;
+    padding-top: clamp(2.5rem, 8vw, 5rem);
+  }
+
+  .hero__text {
+    margin-bottom: clamp(2rem, 6vw, 3.5rem);
+  }
+
+  .hero h1 {
+    max-width: 16ch;
   }
 
   .hero__lede {
-    font-size: 1.15rem;
-    color: var(--muted);
-    max-width: 36rem;
+    font-size: 1.2rem;
+    max-width: var(--measure);
   }
 
   .hero__actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-top: 1.5rem;
+    margin-top: 2rem;
   }
 
-  .upnext {
-    margin-top: 1rem;
+  .hero__photo {
+    max-width: 1600px;
+    margin: 0 auto;
   }
 
   .upnext__grid {
     display: grid;
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
-  @media (min-width: 760px) {
+  @media (min-width: 860px) {
     .upnext__grid {
       grid-template-columns: repeat(3, 1fr);
     }
   }
 
   .card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 1.25rem;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+  }
+
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    padding: 1.5rem;
+    flex: 1;
   }
 
   .card h3 {
-    font-size: 1.3rem;
+    margin-bottom: 0.25rem;
   }
 
-  .card h3 a {
-    color: var(--ink);
+  .card .card__title-link {
+    color: var(--text);
     text-decoration: none;
   }
 
-  .card__kicker {
-    color: var(--accent);
-    font-weight: 600;
-    font-size: 0.85rem;
-    margin: 0 0 0.3rem;
+  .card .card__title-link:hover {
+    text-decoration: underline;
   }
 
   .card__meta {
-    color: var(--muted);
     margin: 0;
-    font-size: 0.95rem;
   }
 
-  .card__cta {
+  .card .badge {
+    margin-top: 0.5rem;
+  }
+
+  /* Push the action to the bottom so the cards line up. */
+  .card__cta,
+  .card__link {
     margin-top: auto;
-    padding-top: 1rem;
-    font-weight: 600;
-    text-decoration: none;
   }
 
-  .signup-wrap {
-    margin-top: 2.5rem;
+  .card__body > :nth-last-child(2) {
+    margin-bottom: 1.25rem;
+  }
+
+  .feature__text {
+    padding-top: 2rem;
+    padding-bottom: clamp(2.5rem, 7vw, 4rem);
+  }
+
+  .feature__text h2 {
+    font-size: clamp(2rem, 6vw, 3rem);
   }
 </style>
 
@@ -207,14 +266,13 @@ const fromPrice = bake && Math.min(...bake.data.items.map((i) => i.price));
       });
     if (now < open) {
       status.textContent = `Orders open ${when(open)}`;
-      cta.textContent = 'Preview the menu →';
+      cta.textContent = 'Preview the menu';
     } else if (now >= close) {
       status.textContent = 'Orders are closed. The next menu goes to the newsletter first.';
-      cta.textContent = 'Get the next menu →';
+      cta.textContent = 'Join the newsletter';
       cta.setAttribute('href', '#signup-heading');
     } else {
       status.textContent = `Ordering now · closes ${when(close)}`;
-      cta.textContent = 'Order for pickup →';
     }
   }
 </script>

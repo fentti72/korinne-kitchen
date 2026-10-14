@@ -1,0 +1,67 @@
+/*
+ * Design tokens. Every color on the site comes from here; components use the
+ * semantic tokens (second block), never raw hex values.
+ * Contrast ratios (WCAG 2.x) are checked by `npm run check:contrast`.
+ */
+:root {
+  /* Palette */
+  --color-flour: #f7f1e8; /* main page background */
+  --color-oat: #e8d9c4; /* cards, section backgrounds, dividers */
+  --color-espresso: #2e2420; /* body text, headings, dark sections */
+  --color-espresso-soft: #5c4a40; /* secondary text */
+  --color-terracotta: #b5502d; /* buttons, calls to action, links */
+  --color-terracotta-dark: #963f22; /* button hover; links on oat */
+  --color-honey: #d9a441; /* small status badges only */
+  --color-honey-ink: #412402; /* text on honey */
+  --color-sage: #7a8b5c; /* tag accents */
+  --color-sage-dark: #4a5735; /* tag text */
+  --color-sage-tint: #e3e8d8; /* tag background */
+  --color-white: #ffffff; /* button text only */
+
+  /* Semantic: surfaces */
+  --bg: var(--color-flour);
+  --surface: var(--color-oat);
+  --surface-dark: var(--color-espresso);
+  --line: var(--color-oat); /* dividers on flour */
+  --line-strong: var(--color-espresso-soft); /* dividers and input borders on oat */
+
+  /* Semantic: text */
+  --text: var(--color-espresso); /* 13.5:1 on flour, 10.9:1 on oat */
+  --text-muted: var(--color-espresso-soft); /* 7.5:1 on flour, 6.0:1 on oat */
+  --text-on-dark: var(--color-flour); /* 13.5:1 on espresso */
+  --text-on-dark-muted: var(--color-oat); /* 10.9:1 on espresso */
+
+  /* Semantic: actions */
+  --action: var(--color-terracotta); /* white text 5.1:1 */
+  --action-hover: var(--color-terracotta-dark); /* white text 6.9:1 */
+  --action-text: var(--color-white);
+  --link: var(--color-terracotta); /* 4.5:1 on flour */
+  --link-on-surface: var(--color-terracotta-dark); /* 5.0:1 on oat (terracotta is only 3.7:1) */
+  --link-on-dark: var(--color-flour); /* terracotta is only 3.0:1 on espresso */
+  --focus: var(--color-terracotta);
+  --focus-on-dark: var(--color-flour);
+
+  /* Semantic: badges and tags */
+  --badge-bg: var(--color-honey);
+  --badge-text: var(--color-honey-ink); /* 6.3:1 */
+  --tag-bg: var(--color-sage-tint);
+  --tag-text: var(--color-sage-dark); /* 6.2:1 (sage itself is only 3.0:1) */
+  --tag-accent: var(--color-sage);
+
+  /* Type */
+  --font-serif: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+  --font-sans: 'DM Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Space and shape */
+  --radius: 12px;
+  --gutter: 16px;
+  --max: 1120px;
+  --measure: 38rem;
+  --space-section: clamp(3rem, 9vw, 6rem);
+}
+
+@media (min-width: 760px) {
+  :root {
+    --gutter: 32px;
+  }
+}

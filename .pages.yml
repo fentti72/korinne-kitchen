@@ -37,6 +37,7 @@ content:
       - { name: durationMinutes, label: Length (minutes), type: number, required: true }
       - { name: level, label: Skill level, type: select, options: { values: [Beginner, Intermediate, Advanced, All levels] }, required: true }
       - { name: seats, label: Total seats, type: number, required: true }
+      - { name: seatsLeft, label: Seats left (until booking is connected), type: number }
       - { name: price, label: Price per seat ($), type: number, required: true }
       - { name: youllMake, label: What you'll make, type: string, list: true }
       - { name: takeHome, label: What you take home, type: string }

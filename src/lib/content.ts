@@ -39,3 +39,14 @@ export async function getCurrentBake(now = new Date()) {
     bakes.at(-1)
   );
 }
+
+/** Seat status for a class: the number left and the badge to show, if any. */
+export function seatStatus(c: { seats: number; seatsLeft?: number }) {
+  const left = c.seatsLeft ?? c.seats;
+  const badge = left === 0 ? 'Sold out' : left <= 3 ? `${left} seat${left === 1 ? '' : 's'} left` : undefined;
+  return { left, soldOut: left === 0, badge };
+}
+
+export async function getGallery() {
+  return (await getCollection('gallery')).sort((a, b) => a.data.order - b.data.order);
+}

@@ -18,8 +18,8 @@ const posts = defineCollection({
     }),
 });
 
-// In-person classes. Seats remaining is tracked live by the booking system;
-// `seats` here is the total for the class.
+// In-person classes. `seats` is the total; `seatsLeft` is set by hand until the
+// booking system reports it live.
 const classes = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/classes' }),
   schema: ({ image }) =>
@@ -29,6 +29,7 @@ const classes = defineCollection({
       durationMinutes: z.number().int().positive(),
       level,
       seats: z.number().int().positive(),
+      seatsLeft: z.number().int().nonnegative().optional(),
       price: z.number().nonnegative(),
       youllMake: z.array(z.string()).default([]),
       takeHome: z.string().default(''),
@@ -96,7 +97,8 @@ const gallery = defineCollection({
   schema: ({ image }) =>
     z.object({
       name: z.string(),
-      photo: image(),
+      // Required in the editor; optional here only until the real photos are in.
+      photo: image().optional(),
       photoAlt: z.string(),
       order: z.number().default(0),
     }),

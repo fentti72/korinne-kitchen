@@ -1,18 +1,6 @@
-/* Placeholder palette: swap these tokens once Korinne picks her colors. */
-:root {
-  --bg: #fbf7f1;
-  --surface: #ffffff;
-  --ink: #2b2420;
-  --muted: #6e625a;
-  --accent: #a4462b;
-  --accent-ink: #ffffff;
-  --line: #e8ded3;
-  --radius: 14px;
-  --gutter: 16px;
-  --max: 1100px;
-  --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
-  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-}
+@import '@fontsource-variable/fraunces';
+@import '@fontsource-variable/dm-sans';
+@import './tokens.css';
 
 *,
 *::before,
@@ -27,25 +15,35 @@ html {
 body {
   margin: 0;
   background: var(--bg);
-  color: var(--ink);
-  font: 17px/1.6 var(--sans);
+  color: var(--text);
+  font: 400 1.0625rem/1.7 var(--font-sans);
 }
 
 h1,
 h2,
 h3 {
-  font-family: var(--serif);
-  line-height: 1.15;
-  font-weight: 600;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
   margin: 0 0 0.5em;
+  font-optical-sizing: auto;
 }
 
 h1 {
-  font-size: clamp(2rem, 7vw, 3.4rem);
+  font-size: clamp(2.3rem, 8vw, 4rem);
 }
 
 h2 {
-  font-size: clamp(1.5rem, 4.5vw, 2.1rem);
+  font-size: clamp(1.7rem, 5vw, 2.5rem);
+}
+
+h3 {
+  font-size: 1.4rem;
+}
+
+p {
+  margin: 0 0 1em;
 }
 
 img {
@@ -55,7 +53,18 @@ img {
 }
 
 a {
-  color: var(--accent);
+  color: var(--link);
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 .wrap {
@@ -64,32 +73,142 @@ a {
   padding: 0 var(--gutter);
 }
 
+.section {
+  padding: var(--space-section) 0;
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.eyebrow {
+  font: 600 0.8rem/1.4 var(--font-sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 0.75em;
+}
+
+/* Buttons: the only place terracotta is used as a fill. */
 .btn {
-  display: inline-block;
-  background: var(--accent);
-  color: var(--accent-ink);
-  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.7em 1.5em;
+  border: 2px solid var(--action);
   border-radius: 999px;
-  padding: 0.75em 1.4em;
-  font: 600 1rem var(--sans);
+  background: var(--action);
+  color: var(--action-text);
+  font: 600 1rem/1.2 var(--font-sans);
   text-decoration: none;
   cursor: pointer;
-  min-height: 44px;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.btn:hover {
+  background: var(--action-hover);
+  border-color: var(--action-hover);
+  text-decoration: none;
 }
 
 .btn--ghost {
   background: transparent;
-  color: var(--accent);
-  box-shadow: inset 0 0 0 2px currentColor;
+  color: var(--link);
 }
 
-.eyebrow {
-  font-size: 0.78rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  font-weight: 600;
-  margin: 0 0 0.4em;
+.btn--ghost:hover {
+  background: var(--action);
+  border-color: var(--action);
+  color: var(--action-text);
+}
+
+.btn[disabled],
+.btn[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Small status badge: "3 seats left", "Sold out". */
+.badge {
+  display: inline-block;
+  padding: 0.2em 0.7em;
+  border-radius: 999px;
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  font: 600 0.8rem/1.5 var(--font-sans);
+  white-space: nowrap;
+}
+
+/* Category tag on recipes and posts. */
+.tag {
+  display: inline-block;
+  padding: 0.15em 0.75em;
+  border-radius: 999px;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  font: 500 0.82rem/1.6 var(--font-sans);
+  text-decoration: none;
+}
+
+a.tag:hover {
+  box-shadow: inset 0 0 0 1px var(--tag-accent);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Cards and other oat surfaces: links switch to the darker terracotta for contrast. */
+.surface {
+  background: var(--surface);
+  border-radius: var(--radius);
+}
+
+.surface a:not(.btn):not(.tag) {
+  color: var(--link-on-surface);
+}
+
+/* Dark sections built around photos (gallery, feature bands). */
+.dark {
+  background: var(--surface-dark);
+  color: var(--text-on-dark);
+  --focus: var(--focus-on-dark);
+}
+
+.dark .muted,
+.dark .eyebrow {
+  color: var(--text-on-dark-muted);
+}
+
+.dark a:not(.btn) {
+  color: var(--link-on-dark);
+}
+
+/* Stand-in until real photos arrive. Not a photo, so it carries no overlay. */
+.photo-placeholder {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: var(--ratio, 4 / 3);
+  background: var(--surface);
+  color: var(--text-muted);
+  font: 500 0.95rem var(--font-sans);
+  text-align: center;
+  padding: 1rem;
+}
+
+.dark .photo-placeholder {
+  background: var(--color-espresso-soft);
+  color: var(--text-on-dark-muted);
 }
 
 .visually-hidden {
@@ -99,9 +218,4 @@ a {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
-}
-
-:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 2px;
 }
