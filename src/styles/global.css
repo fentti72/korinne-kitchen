@@ -1,0 +1,107 @@
+/* Placeholder palette: swap these tokens once Korinne picks her colors. */
+:root {
+  --bg: #fbf7f1;
+  --surface: #ffffff;
+  --ink: #2b2420;
+  --muted: #6e625a;
+  --accent: #a4462b;
+  --accent-ink: #ffffff;
+  --line: #e8ded3;
+  --radius: 14px;
+  --gutter: 16px;
+  --max: 1100px;
+  --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 17px/1.6 var(--sans);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--serif);
+  line-height: 1.15;
+  font-weight: 600;
+  margin: 0 0 0.5em;
+}
+
+h1 {
+  font-size: clamp(2rem, 7vw, 3.4rem);
+}
+
+h2 {
+  font-size: clamp(1.5rem, 4.5vw, 2.1rem);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: var(--accent);
+}
+
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.btn {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 0;
+  border-radius: 999px;
+  padding: 0.75em 1.4em;
+  font: 600 1rem var(--sans);
+  text-decoration: none;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--accent);
+  box-shadow: inset 0 0 0 2px currentColor;
+}
+
+.eyebrow {
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+  margin: 0 0 0.4em;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}

@@ -1,0 +1,220 @@
+---
+import '../styles/global.css';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+import { site } from '../site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Hide the footer signup on pages that already have one in the body. */
+  footerSignup?: boolean;
+}
+
+const { title, description = site.tagline, footerSignup = true } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.area.label}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const path = Astro.url.pathname;
+
+// Business structured data: area only, never a street address.
+const business = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: site.name,
+  description: site.tagline,
+  url: Astro.site?.toString(),
+  founder: { '@type': 'Person', name: site.chef },
+  areaServed: { '@type': 'City', name: `${site.area.city}, ${site.area.region}` },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: site.area.city,
+    addressRegion: site.area.region,
+    addressCountry: site.area.country,
+  },
+  ...(site.instagram ? { sameAs: [`https://instagram.com/${site.instagram}`] } : {}),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#fbf7f1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script type="application/ld+json" set:html={JSON.stringify(business)} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="wrap site-header__inner">
+        <a class="brand" href="/">{site.name}</a>
+        <details class="menu">
+          <summary>Menu</summary>
+          <nav aria-label="Main">
+            <ul>
+              {
+                site.nav.map((item) => (
+                  <li>
+                    <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
+                      {item.label}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </nav>
+        </details>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        {footerSignup && <NewsletterSignup />}
+        <p class="site-footer__meta">
+          {site.name} · Classes and pickup in {site.area.label} · <a href="/policies/">Policies</a>
+          {site.instagram && (
+            <>
+              {' · '}
+              <a href={`https://instagram.com/${site.instagram}`}>Instagram</a>
+            </>
+          )}
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .skip {
+    position: absolute;
+    left: -999px;
+  }
+
+  .skip:focus {
+    left: var(--gutter);
+    top: 8px;
+    z-index: 10;
+    background: var(--surface);
+    padding: 0.5em 1em;
+  }
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+  }
+
+  .brand {
+    font: 600 1.2rem var(--serif);
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .menu summary {
+    list-style: none;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0.6rem 0;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .menu summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .menu nav {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem var(--gutter) 1rem;
+  }
+
+  .menu a {
+    display: block;
+    padding: 0.7rem 0;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 1.1rem;
+  }
+
+  .menu a[aria-current='page'] {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Desktop: always-visible inline nav. */
+  @media (min-width: 900px) {
+    .menu summary {
+      display: none;
+    }
+
+    .menu nav {
+      position: static;
+      border: 0;
+      background: none;
+    }
+
+    .menu ul {
+      display: flex;
+      gap: 1.4rem;
+      padding: 0;
+    }
+
+    .menu a {
+      font-size: 0.95rem;
+    }
+  }
+
+  .site-footer {
+    margin-top: 4rem;
+    padding: 2rem 0 3rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .site-footer__meta {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-top: 1.5rem;
+  }
+</style>
+
+<script>
+  // On desktop, the details element must be open so the inline nav shows.
+  const menu = document.querySelector<HTMLDetailsElement>('.menu');
+  const mq = window.matchMedia('(min-width: 900px)');
+  const sync = () => menu && (menu.open = mq.matches);
+  sync();
+  mq.addEventListener('change', sync);
+</script>

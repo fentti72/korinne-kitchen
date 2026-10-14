@@ -1,0 +1,113 @@
+# Pages CMS (https://pagescms.org): the editor Korinne uses to update the site.
+media:
+  input: src/assets/uploads
+  output: ../../assets/uploads
+
+content:
+  - name: posts
+    label: Kitchen Notes
+    type: collection
+    path: src/content/posts
+    filename: "{year}-{month}-{day}-{primary}.md"
+    view:
+      fields: [title, date]
+      sort: [date]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: date, label: Date, type: date, required: true }
+      - { name: photo, label: Photo, type: image }
+      - { name: photoAlt, label: Describe the photo (for screen readers), type: string }
+      - { name: tags, label: Tags, type: select, list: true, options: { creatable: true, values: [bread, pastry, seasonal, dinner, testing, class prep] } }
+      - { name: draft, label: Draft (hide from site), type: boolean }
+      - { name: body, label: Post, type: rich-text }
+
+  - name: classes
+    label: Classes
+    type: collection
+    path: src/content/classes
+    filename: "{year}-{month}-{day}-{primary}.md"
+    view:
+      fields: [title, start]
+    fields:
+      - { name: title, label: Class name, type: string, required: true }
+      - { name: start, label: Date and start time, type: date, options: { time: true }, required: true }
+      - { name: durationMinutes, label: Length (minutes), type: number, required: true }
+      - { name: level, label: Skill level, type: select, options: { values: [Beginner, Intermediate, Advanced, All levels] }, required: true }
+      - { name: seats, label: Total seats, type: number, required: true }
+      - { name: price, label: Price per seat ($), type: number, required: true }
+      - { name: youllMake, label: What you'll make, type: string, list: true }
+      - { name: takeHome, label: What you take home, type: string }
+      - { name: bring, label: What to bring, type: string }
+      - { name: minAge, label: Minimum age, type: number }
+      - { name: photo, label: Photo, type: image }
+      - { name: photoAlt, label: Describe the photo, type: string }
+      - { name: draft, label: Draft (hide from site), type: boolean }
+      - { name: body, label: Description, type: rich-text }
+
+  - name: bakes
+    label: Bake Drops
+    type: collection
+    path: src/content/bakes
+    filename: "{year}-{month}-{day}-{primary}.md"
+    view:
+      fields: [title, ordersOpen]
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: ordersOpen, label: Orders open, type: date, options: { time: true }, required: true }
+      - { name: ordersClose, label: Orders close, type: date, options: { time: true }, required: true }
+      - { name: pickupWindows, label: Pickup windows, type: string, list: true, required: true }
+      - name: items
+        label: Menu
+        type: object
+        list: true
+        fields:
+          - { name: name, label: Item, type: string, required: true }
+          - { name: description, label: Description, type: string }
+          - { name: price, label: Price ($), type: number, required: true }
+          - { name: quantity, label: How many you're making, type: number, required: true }
+          - { name: perOrderLimit, label: Limit per order, type: number, default: 2 }
+      - { name: photo, label: Photo, type: image }
+      - { name: photoAlt, label: Describe the photo, type: string }
+      - { name: draft, label: Draft (hide from site), type: boolean }
+      - { name: body, label: Notes, type: rich-text }
+
+  - name: recipes
+    label: Recipes
+    type: collection
+    path: src/content/recipes
+    filename: "{primary}.md"
+    fields:
+      - { name: title, label: Recipe name, type: string, required: true }
+      - { name: summary, label: Short intro, type: text }
+      - { name: servings, label: Servings, type: number, required: true }
+      - { name: prepMinutes, label: Prep time (minutes), type: number, required: true }
+      - { name: cookMinutes, label: Cook time (minutes), type: number, required: true }
+      - name: ingredients
+        label: Ingredients
+        type: object
+        list: true
+        fields:
+          - { name: amount, label: Amount (number; leave blank for "to taste"), type: number }
+          - { name: unit, label: Unit, type: string }
+          - { name: item, label: Ingredient, type: string, required: true }
+      - { name: steps, label: Steps, type: text, list: true, required: true }
+      - { name: tags, label: Tags, type: string, list: true }
+      - { name: photo, label: Photo, type: image }
+      - { name: photoAlt, label: Describe the photo, type: string }
+      - { name: draft, label: Draft (hide from site), type: boolean }
+      - { name: body, label: Notes, type: rich-text }
+
+  - name: gallery
+    label: Signature Dishes
+    type: collection
+    path: src/content/gallery
+    filename: "{primary}.md"
+    fields:
+      - { name: name, label: Dish name, type: string, required: true }
+      - { name: photo, label: Photo, type: image, required: true }
+      - { name: photoAlt, label: Describe the photo, type: string, required: true }
+      - { name: order, label: Display order, type: number }
+      - { name: body, label: The story behind it, type: rich-text }

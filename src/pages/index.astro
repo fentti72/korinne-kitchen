@@ -1,0 +1,220 @@
+---
+import Base from '../layouts/Base.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+import { site } from '../site';
+import {
+  getPosts,
+  getUpcomingClasses,
+  getCurrentBake,
+  formatDay,
+  formatTime,
+  formatDuration,
+  formatDate,
+} from '../lib/content';
+
+const [latestPost] = await getPosts();
+const [nextClass] = await getUpcomingClasses();
+const bake = await getCurrentBake();
+const fromPrice = bake && Math.min(...bake.data.items.map((i) => i.price));
+---
+
+<Base footerSignup={false}>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">{site.area.label}</p>
+      <h1>Cook with me, bake with me, or just come pick up bread.</h1>
+      <p class="hero__lede">
+        I'm {site.chef}. I teach small, hands-on cooking and baking classes and put out a short bake menu most weeks,
+        all for pickup in {site.area.city}.
+      </p>
+      <div class="hero__actions">
+        {nextClass && <a class="btn" href="/classes/">See upcoming classes</a>}
+        <a class="btn btn--ghost" href="/bake/">This week's bake</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap upnext" aria-labelledby="upnext-heading">
+    <h2 id="upnext-heading" class="eyebrow">Up next</h2>
+    <div class="upnext__grid">
+      <article class="card">
+        <p class="card__kicker">Next class</p>
+        {
+          nextClass ? (
+            <>
+              <h3>
+                <a href="/classes/">{nextClass.data.title}</a>
+              </h3>
+              <p class="card__meta">
+                {formatDay(nextClass.data.start)} · {formatTime(nextClass.data.start)} ·{' '}
+                {formatDuration(nextClass.data.durationMinutes)}
+              </p>
+              <p class="card__meta">
+                {nextClass.data.level} · ${nextClass.data.price} · {nextClass.data.seats} seats
+              </p>
+              <a class="card__cta" href="/classes/">
+                Book a seat →
+              </a>
+            </>
+          ) : (
+            <>
+              <h3>New classes coming soon</h3>
+              <p class="card__meta">Newsletter subscribers hear first.</p>
+              <a class="card__cta" href="#signup-heading">
+                Get notified →
+              </a>
+            </>
+          )
+        }
+      </article>
+
+      {
+        bake && (
+          <article
+            class="card"
+            data-bake
+            data-open={bake.data.ordersOpen.toISOString()}
+            data-close={bake.data.ordersClose.toISOString()}
+          >
+            <p class="card__kicker">This week's bake</p>
+            <h3>
+              <a href="/bake/">{bake.data.items.map((i) => i.name).join(', ')}</a>
+            </h3>
+            <p class="card__meta">From ${fromPrice} · Pickup only</p>
+            <p class="card__meta" data-bake-status>
+              Orders close {formatDay(bake.data.ordersClose)}, {formatTime(bake.data.ordersClose)}
+            </p>
+            <a class="card__cta" href="/bake/" data-bake-cta>
+              See the menu →
+            </a>
+          </article>
+        )
+      }
+
+      {
+        latestPost && (
+          <article class="card">
+            <p class="card__kicker">Latest from Kitchen Notes</p>
+            <h3>
+              <a href={`/kitchen-notes/${latestPost.id}/`}>{latestPost.data.title}</a>
+            </h3>
+            <p class="card__meta">{formatDate(latestPost.data.date)}</p>
+            <a class="card__cta" href="/kitchen-notes/">
+              More notes →
+            </a>
+          </article>
+        )
+      }
+    </div>
+  </section>
+
+  <div class="wrap signup-wrap">
+    <NewsletterSignup />
+  </div>
+</Base>
+
+<style>
+  .hero {
+    padding: 3rem 0 2rem;
+  }
+
+  .hero__lede {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 36rem;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .upnext {
+    margin-top: 1rem;
+  }
+
+  .upnext__grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 760px) {
+    .upnext__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card h3 {
+    font-size: 1.3rem;
+  }
+
+  .card h3 a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .card__kicker {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin: 0 0 0.3rem;
+  }
+
+  .card__meta {
+    color: var(--muted);
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .card__cta {
+    margin-top: auto;
+    padding-top: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .signup-wrap {
+    margin-top: 2.5rem;
+  }
+</style>
+
+<script>
+  // The page is prebuilt, so the bake drop's open/closed state is worked out in the visitor's browser.
+  const card = document.querySelector<HTMLElement>('[data-bake]');
+  if (card) {
+    const open = new Date(card.dataset.open!);
+    const close = new Date(card.dataset.close!);
+    const now = new Date();
+    const status = card.querySelector('[data-bake-status]')!;
+    const cta = card.querySelector('[data-bake-cta]')!;
+    const when = (d: Date) =>
+      d.toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+        weekday: 'short',
+        hour: 'numeric',
+        minute: '2-digit',
+      });
+    if (now < open) {
+      status.textContent = `Orders open ${when(open)}`;
+      cta.textContent = 'Preview the menu →';
+    } else if (now >= close) {
+      status.textContent = 'Orders are closed. The next menu goes to the newsletter first.';
+      cta.textContent = 'Get the next menu →';
+      cta.setAttribute('href', '#signup-heading');
+    } else {
+      status.textContent = `Ordering now · closes ${when(close)}`;
+      cta.textContent = 'Order for pickup →';
+    }
+  }
+</script>

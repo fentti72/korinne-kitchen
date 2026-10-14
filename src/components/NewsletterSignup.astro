@@ -1,0 +1,54 @@
+---
+import { site } from '../site';
+
+interface Props {
+  heading?: string;
+  blurb?: string;
+}
+
+const {
+  heading = 'Get the Sunday letter',
+  blurb = 'New classes, the weekly bake menu before it sells out, and what’s on the stove. About once a week.',
+} = Astro.props;
+---
+
+<section class="signup" aria-labelledby="signup-heading">
+  <h2 id="signup-heading">{heading}</h2>
+  <p>{blurb}</p>
+  <form method="post" action={site.newsletterAction || undefined} class="signup__form">
+    <label class="visually-hidden" for="signup-email">Email address</label>
+    <input id="signup-email" type="email" name="email" required autocomplete="email" placeholder="you@example.com" />
+    <button class="btn" type="submit">Sign up</button>
+  </form>
+</section>
+
+<style>
+  .signup {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+  }
+
+  .signup p {
+    color: var(--muted);
+    margin: 0 0 1rem;
+  }
+
+  .signup__form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  input {
+    flex: 1 1 14rem;
+    min-height: 44px;
+    padding: 0 1rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font: inherit;
+    background: var(--bg);
+    color: var(--ink);
+  }
+</style>
