@@ -3,7 +3,6 @@ import Base from '../layouts/Base.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
 import Photo from '../components/Photo.astro';
 import { site } from '../site';
-import portrait from '../assets/photos/about-portrait.jpg';
 import {
   getPosts,
   getUpcomingClasses,
@@ -52,16 +51,6 @@ const seats = nextClass && seatStatus(nextClass.data);
           )
         }
       </div>
-    </div>
-    <div class="hero__photo">
-      <Photo
-        src={portrait}
-        alt="Korinne smiling in a dark green T-shirt"
-        placeholder="Korinne"
-        ratio={4 / 5}
-        loading="eager"
-        sizes="(min-width: 860px) 40vw, 100vw"
-      />
     </div>
   </section>
 
@@ -184,17 +173,7 @@ const seats = nextClass && seatStatus(nextClass.data);
 
 <style>
   .hero {
-    display: grid;
-    gap: 2rem;
-    align-items: center;
     padding-top: clamp(2rem, 7vw, 5rem);
-  }
-
-  @media (min-width: 860px) {
-    .hero {
-      grid-template-columns: 3fr 2fr;
-      gap: 4rem;
-    }
   }
 
   .hero h1 {
@@ -211,25 +190,6 @@ const seats = nextClass && seatStatus(nextClass.data);
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 2rem;
-  }
-
-  .hero__photo {
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  /* On phones, the photo leads and the text follows. */
-  @media (max-width: 859px) {
-    .hero__photo {
-      order: -1;
-      margin: 0 calc(-1 * var(--gutter));
-      border-radius: 0;
-    }
-
-    .hero__photo :global(img) {
-      aspect-ratio: 1 / 1 !important;
-      object-position: center 30%;
-    }
   }
 
   .upnext__grid {
