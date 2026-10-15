@@ -70,10 +70,34 @@ const business = {
             <ul>
               {
                 site.nav.map((item) => (
-                  <li>
+                  <li class:list={['nav-item', { 'nav-item--parent': 'children' in item }]}>
                     <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
                       {item.label}
                     </a>
+                    {'children' in item && (
+                      <>
+                        <button
+                          class="sub-toggle"
+                          type="button"
+                          aria-expanded="false"
+                          aria-controls={`sub-${item.label}`}
+                          aria-label={`${item.label} categories`}
+                        >
+                          <svg viewBox="0 0 12 8" aria-hidden="true" focusable="false">
+                            <path d="M1 1.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>
+                        </button>
+                        <ul class="sub" id={`sub-${item.label}`}>
+                          {item.children.map((child) => (
+                            <li>
+                              <a href={child.href} aria-current={path === child.href ? 'page' : undefined}>
+                                {child.label}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
                   </li>
                 ))
               }
@@ -189,7 +213,28 @@ const business = {
     font-weight: 600;
   }
 
-  /* Desktop: always-visible inline nav. */
+  /* Phones: categories sit indented under their parent; no toggle needed. */
+  .menu .sub {
+    padding: 0 0 0.25rem 1rem;
+    border-left: 2px solid var(--line);
+    margin-left: 0.25rem;
+  }
+
+  .menu .sub a {
+    padding: 0.5rem 0;
+    font-size: 1rem;
+    color: var(--text-muted);
+  }
+
+  .menu .sub a[aria-current='page'] {
+    color: var(--link);
+  }
+
+  .sub-toggle {
+    display: none;
+  }
+
+  /* Desktop: always-visible inline nav, with a dropdown under items that have categories. */
   @media (min-width: 900px) {
     .menu summary {
       display: none;
@@ -209,6 +254,69 @@ const business = {
 
     .menu a {
       font-size: 0.95rem;
+    }
+
+    .nav-item--parent {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.15rem;
+    }
+
+    .sub-toggle {
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 32px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .sub-toggle svg {
+      width: 10px;
+      transition: transform 0.15s;
+    }
+
+    .menu .sub {
+      position: absolute;
+      top: 100%;
+      left: -1rem;
+      z-index: 6;
+      display: none;
+      flex-direction: column;
+      gap: 0;
+      min-width: 12rem;
+      margin: 0;
+      padding: 0.5rem 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--bg);
+      box-shadow: 0 8px 24px rgb(46 36 32 / 0.12); /* espresso */
+    }
+
+    .menu .sub a {
+      padding: 0.55rem 1rem;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .menu .sub a:hover {
+      background: var(--surface);
+    }
+
+    /* Open on hover, when the arrow button is pressed, or while keyboard focus is inside the list. */
+    .nav-item--parent:hover .sub,
+    .nav-item--parent.is-open .sub,
+    .menu .sub:focus-within {
+      display: flex;
+    }
+
+    .nav-item--parent:hover .sub-toggle svg,
+    .nav-item--parent.is-open .sub-toggle svg {
+      transform: rotate(180deg);
     }
   }
 
@@ -241,4 +349,23 @@ const business = {
   const sync = () => menu && (menu.open = mq.matches);
   sync();
   mq.addEventListener('change', sync);
+
+  // Dropdown arrow buttons: toggle on click, close on Escape or a click elsewhere.
+  document.querySelectorAll<HTMLButtonElement>('.sub-toggle').forEach((btn) => {
+    const item = btn.closest('.nav-item--parent')!;
+    const setOpen = (open: boolean) => {
+      item.classList.toggle('is-open', open);
+      btn.setAttribute('aria-expanded', String(open));
+    };
+    btn.addEventListener('click', () => setOpen(!item.classList.contains('is-open')));
+    item.addEventListener('keydown', (e) => {
+      if ((e as KeyboardEvent).key === 'Escape') {
+        setOpen(false);
+        btn.focus();
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (!item.contains(e.target as Node)) setOpen(false);
+    });
+  });
 </script>

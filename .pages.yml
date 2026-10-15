@@ -85,6 +85,17 @@ content:
     filename: "{primary}.md"
     fields:
       - { name: title, label: Recipe name, type: string, required: true }
+      - name: category
+        label: Category
+        type: select
+        required: true
+        options:
+          values:
+            - { value: breads, label: Breads }
+            - { value: desserts, label: Desserts }
+            - { value: cookies, label: Cookies }
+            - { value: main-dishes, label: Main Dishes }
+            - { value: side-dishes, label: Side Dishes }
       - { name: summary, label: Short intro, type: text }
       - { name: servings, label: Servings, type: number, required: true }
       - { name: prepMinutes, label: Prep time (minutes), type: number, required: true }

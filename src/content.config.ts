@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { recipeCategories, type RecipeCategory } from './recipe-categories';
 
 const level = z.enum(['Beginner', 'Intermediate', 'Advanced', 'All levels']);
 
@@ -76,6 +77,7 @@ const recipes = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
+      category: z.enum(recipeCategories.map((c) => c.slug) as [RecipeCategory, ...RecipeCategory[]]),
       summary: z.string().default(''),
       servings: z.number().int().positive(),
       prepMinutes: z.number().int().nonnegative(),

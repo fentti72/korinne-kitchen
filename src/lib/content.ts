@@ -68,3 +68,7 @@ export function getAllTags(posts: { data: { tags: string[] } }[]) {
   posts.forEach((p) => p.data.tags.forEach((t) => counts.set(t, (counts.get(t) ?? 0) + 1)));
   return [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([t]) => t);
 }
+
+export async function getRecipes() {
+  return (await getCollection('recipes', live)).sort((a, b) => a.data.title.localeCompare(b.data.title));
+}

@@ -6,6 +6,7 @@ import Photo from '../../components/Photo.astro';
 import { site } from '../../site';
 import { formatDuration } from '../../lib/content';
 import { describe } from '../../lib/amount';
+import { categoryHref, categoryLabel } from '../../recipe-categories';
 
 export async function getStaticPaths() {
   const recipes = await getCollection('recipes', (r) => import.meta.env.DEV || !r.data.draft);
@@ -30,6 +31,7 @@ const structured = {
   description: r.summary,
   author: { '@type': 'Person', name: site.chef },
   ...(photoUrl ? { image: new URL(photoUrl, Astro.site).toString() } : {}),
+  recipeCategory: categoryLabel(r.category),
   recipeYield: `${r.servings} servings`,
   prepTime: iso(r.prepMinutes),
   cookTime: iso(r.cookMinutes),
@@ -45,7 +47,7 @@ const structured = {
 
   <article class="recipe">
     <header class="wrap recipe__head">
-      <p class="eyebrow"><a href="/recipes/">Recipes</a></p>
+      <p class="eyebrow"><a href="/recipes/">Recipes</a> · <a href={categoryHref(r.category)}>{categoryLabel(r.category)}</a></p>
       <h1>{r.title}</h1>
       {r.summary && <p class="muted lede">{r.summary}</p>}
       <dl class="times">

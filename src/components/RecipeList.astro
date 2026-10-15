@@ -1,0 +1,127 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Photo from './Photo.astro';
+import { formatDuration } from '../lib/content';
+import { recipeCategories, categoryHref, categoryLabel, type RecipeCategory } from '../recipe-categories';
+
+interface Props {
+  recipes: CollectionEntry<'recipes'>[];
+  activeCategory?: RecipeCategory;
+}
+
+const { recipes, activeCategory } = Astro.props;
+---
+
+<div class="wrap">
+  <nav class="filters" aria-label="Recipe categories">
+    <ul class="tags">
+      <li>
+        <a class="tag" href="/recipes/" aria-current={activeCategory ? undefined : 'page'}>All</a>
+      </li>
+      {
+        recipeCategories.map((c) => (
+          <li>
+            <a class="tag" href={categoryHref(c.slug)} aria-current={c.slug === activeCategory ? 'page' : undefined}>
+              {c.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  {
+    recipes.length === 0 && (
+      <p class="surface empty">
+        No {activeCategory ? categoryLabel(activeCategory).toLowerCase() : 'recipes'} here yet. Check back soon, or{' '}
+        <a href="/recipes/">browse all recipes</a>.
+      </p>
+    )
+  }
+
+  <ul class="recipes">
+    {
+      recipes.map((r) => (
+        <li class="recipe-card surface">
+          <a class="recipe-card__link" href={`/recipes/${r.id}/`}>
+            <Photo src={r.data.photo} alt={r.data.photoAlt} placeholder={r.data.title} sizes="(min-width: 760px) 50vw, 100vw" />
+            <div class="recipe-card__body">
+              <p class="eyebrow">{categoryLabel(r.data.category)}</p>
+              <h2>{r.data.title}</h2>
+              <p class="muted">
+                {formatDuration(r.data.prepMinutes + r.data.cookMinutes)} · Serves {r.data.servings}
+              </p>
+            </div>
+          </a>
+          {r.data.tags.length > 0 && (
+            <ul class="tags recipe-card__tags">
+              {r.data.tags.map((t) => (
+                <li class="tag">{t}</li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .filters {
+    margin-bottom: 2rem;
+  }
+
+  .filters .tag[aria-current='page'] {
+    background: var(--tag-text);
+    color: var(--tag-bg);
+  }
+
+  .empty {
+    padding: 1.5rem;
+  }
+
+  .recipes {
+    list-style: none;
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  @media (min-width: 760px) {
+    .recipes {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .recipe-card {
+    overflow: hidden;
+  }
+
+  .recipe-card__link {
+    display: block;
+    text-decoration: none;
+  }
+
+  .surface .recipe-card__link {
+    color: var(--text);
+  }
+
+  .recipe-card__body {
+    padding: 1.25rem 1.5rem 0;
+  }
+
+  .recipe-card h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .recipe-card__link:hover h2 {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .recipe-card__tags {
+    padding: 0 1.5rem 1.5rem;
+  }
+</style>

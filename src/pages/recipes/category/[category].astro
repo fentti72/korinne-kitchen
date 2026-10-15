@@ -1,0 +1,33 @@
+---
+import Base from '../../../layouts/Base.astro';
+import RecipeList from '../../../components/RecipeList.astro';
+import { getRecipes } from '../../../lib/content';
+import { recipeCategories } from '../../../recipe-categories';
+
+export async function getStaticPaths() {
+  const recipes = await getRecipes();
+  // Every category gets a page, even before it has recipes, so the menu never leads nowhere.
+  return recipeCategories.map((c) => ({
+    params: { category: c.slug },
+    props: { category: c, recipes: recipes.filter((r) => r.data.category === c.slug) },
+  }));
+}
+
+const { category, recipes } = Astro.props;
+---
+
+<Base title={`${category.label} · Recipes`} description={`Korinne's favorite ${category.label.toLowerCase()} recipes.`}>
+  <header class="wrap intro">
+    <p class="eyebrow"><a href="/recipes/">Recipes</a></p>
+    <h1>{category.label}</h1>
+  </header>
+
+  <RecipeList recipes={recipes} activeCategory={category.slug} />
+</Base>
+
+<style>
+  .intro {
+    padding-top: clamp(2.5rem, 8vw, 5rem);
+    padding-bottom: clamp(1.5rem, 4vw, 2rem);
+  }
+</style>
