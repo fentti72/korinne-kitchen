@@ -22,7 +22,7 @@ const posts = await getPosts();
 const [nextClass] = showClasses ? await getUpcomingClasses() : [];
 const bake = showBake ? await getCurrentBake() : undefined;
 const postCards = posts.slice(0, 3 - Number(showClasses) - Number(showBake));
-const [featuredDish] = await getGallery();
+const [featuredDish] = site.features.gallery ? await getGallery() : [];
 const fromPrice = bake && Math.min(...bake.data.items.map((i) => i.price));
 const seats = nextClass && seatStatus(nextClass.data);
 ---

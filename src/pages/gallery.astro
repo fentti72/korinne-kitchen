@@ -5,6 +5,9 @@ import { site } from '../site';
 import Photo from '../components/Photo.astro';
 import { getGallery } from '../lib/content';
 
+// Hidden while switched off in src/features.ts.
+if (!site.features.gallery) return Astro.redirect('/');
+
 const dishes = await Promise.all(
   (await getGallery()).map(async (dish) => ({ dish, Story: (await render(dish)).Content })),
 );

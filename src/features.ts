@@ -4,11 +4,14 @@
 export const features = {
   classes: false,
   bake: false,
+  // The Signature Dishes gallery (and the homepage's signature dish band).
+  gallery: false,
 };
 
 /** Pages that are hidden while their switch is off. */
 export const hiddenPaths = [
   ...(features.classes ? [] : ['/classes']),
   ...(features.bake ? [] : ['/bake']),
+  ...(features.gallery ? [] : ['/gallery']),
   ...(features.classes || features.bake ? [] : ['/policies']),
 ];

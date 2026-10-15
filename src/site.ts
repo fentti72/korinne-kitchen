@@ -29,7 +29,7 @@ export const site = {
       label: 'Recipes',
       children: recipeCategories.map((c) => ({ href: categoryHref(c.slug), label: c.label })),
     },
-    { href: '/gallery/', label: 'Gallery' },
+    ...(features.gallery ? [{ href: '/gallery/', label: 'Gallery' }] : []),
     { href: '/about/', label: 'About' },
   ],
 } as const;

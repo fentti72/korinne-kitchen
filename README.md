@@ -22,9 +22,9 @@ The website for Korinne, a chef in Flower Mound, Texas: Kitchen Notes (blog), si
 Photos are in `src/assets/photos`; `scripts/crop-photos.py` records how each was cropped.
 Run `npm run check:contrast` after changing any color in `src/styles/tokens.css`.
 
-## Hiding classes and bake sales
+## Hiding classes, bake sales, and the gallery
 
-`src/features.ts` has two switches, `classes` and `bake`. While one is `false`, its nav link, page, homepage card,
+`src/features.ts` has switches for `classes`, `bake`, and `gallery`. While one is `false`, its nav link, page, homepage card,
 and every mention elsewhere are hidden, and its page redirects to the homepage (Netlify `_redirects`, generated at
 build). Set it back to `true` to bring it all back. Content in the editor is kept either way.
 
