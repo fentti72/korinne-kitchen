@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
+import Logo from '../components/Logo.astro';
 import { getImage } from 'astro:assets';
 import { site } from '../site';
 import sharePhoto from '../assets/photos/about-portrait.jpg';
@@ -62,7 +63,7 @@ const business = {
     <a class="skip" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="wrap site-header__inner">
-        <a class="brand" href="/">{site.name}</a>
+        <a class="brand" href="/" aria-label={`${site.name}, home`}><Logo /></a>
         <details class="menu">
           <summary>Menu</summary>
           <nav aria-label="Main">
@@ -89,6 +90,7 @@ const business = {
     <footer class="site-footer">
       <div class="wrap">
         {footerSignup && <NewsletterSignup />}
+        <a class="site-footer__logo" href="/" aria-label={`${site.name}, home`}><Logo variant="stacked" /></a>
         <p class="site-footer__meta">
           {site.name} · Classes and pickup in {site.area.label} · <a href="/policies/">Policies</a>
           {site.instagram && (
@@ -130,12 +132,12 @@ const business = {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 60px;
+    min-height: 64px;
   }
 
   .brand {
-    font: 500 1.3rem var(--font-serif);
-    color: var(--text);
+    display: inline-flex;
+    padding: 0.5rem 0;
     text-decoration: none;
   }
 
@@ -210,10 +212,19 @@ const business = {
     border-top: 1px solid var(--line);
   }
 
+  .site-footer__logo {
+    display: flex;
+    justify-content: center;
+    margin: 3rem auto 0;
+    width: fit-content;
+    text-decoration: none;
+  }
+
   .site-footer__meta {
     color: var(--text-muted);
     font-size: 0.9rem;
     margin-top: 1.5rem;
+    text-align: center;
   }
 </style>
 

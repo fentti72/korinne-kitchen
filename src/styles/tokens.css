@@ -16,6 +16,7 @@
   --color-sage: #7a8b5c; /* tag accents */
   --color-sage-dark: #4a5735; /* tag text */
   --color-sage-tint: #e3e8d8; /* tag background */
+  --color-moss: #616e48; /* logo mark and tagline */
   --color-white: #ffffff; /* button text only */
 
   /* Semantic: surfaces */
@@ -48,9 +49,14 @@
   --tag-text: var(--color-sage-dark); /* 6.2:1 (sage itself is only 3.0:1) */
   --tag-accent: var(--color-sage);
 
+  /* Semantic: logo */
+  --logo-mark: var(--color-moss); /* 4.9:1 on flour */
+  --logo-text: var(--color-espresso);
+
   /* Type */
   --font-serif: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
   --font-sans: 'DM Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
   /* Space and shape */
   --radius: 12px;

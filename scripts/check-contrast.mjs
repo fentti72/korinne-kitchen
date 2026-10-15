@@ -20,6 +20,7 @@ const pairs = [
   ['terracotta', 'oat', 3, 'focus ring and button edge on cards'],
   ['honey-ink', 'honey', 4.5, 'badge text'],
   ['sage-dark', 'sage-tint', 4.5, 'tag text'],
+  ['moss', 'flour', 4.5, 'logo tagline'],
   ['flour', 'espresso', 4.5, 'text in dark sections'],
   ['oat', 'espresso', 4.5, 'secondary text in dark sections'],
   ['oat', 'espresso-soft', 4.5, 'photo placeholder text in dark sections'],
