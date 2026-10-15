@@ -92,7 +92,13 @@ const business = {
         {footerSignup && <NewsletterSignup />}
         <a class="site-footer__logo" href="/" aria-label={`${site.name}, home`}><Logo variant="stacked" /></a>
         <p class="site-footer__meta">
-          {site.name} · Classes and pickup in {site.area.label} · <a href="/policies/">Policies</a>
+          {site.name} · {site.area.label}
+          {(site.features.classes || site.features.bake) && (
+            <>
+              {' · '}
+              <a href="/policies/">Policies</a>
+            </>
+          )}
           {site.instagram && (
             <>
               {' · '}

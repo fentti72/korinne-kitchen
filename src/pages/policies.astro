@@ -1,11 +1,25 @@
 ---
 import Base from '../layouts/Base.astro';
+import { site } from '../site';
 import { getPolicies } from '../lib/content';
 
+// Hidden while switched off in src/site.ts.
+if (!site.features.classes && !site.features.bake) return Astro.redirect('/');
+
 const groups = [
-  { heading: 'Classes', link: '/classes/', cta: 'See upcoming classes', policies: await getPolicies('classes') },
-  { heading: 'Bake drops and pickup', link: '/bake/', cta: "See this week's bake", policies: await getPolicies('bake') },
-];
+  site.features.classes && {
+    heading: 'Classes',
+    link: '/classes/',
+    cta: 'See upcoming classes',
+    policies: await getPolicies('classes'),
+  },
+  site.features.bake && {
+    heading: 'Bake drops and pickup',
+    link: '/bake/',
+    cta: "See this week's bake",
+    policies: await getPolicies('bake'),
+  },
+].filter((g) => !!g);
 ---
 
 <Base title="Policies" description="Cancellation, allergy, age, and pickup policies for classes and bake drops.">

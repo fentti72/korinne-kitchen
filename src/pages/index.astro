@@ -16,9 +16,13 @@ import {
   formatDate,
 } from '../lib/content';
 
-const [latestPost] = await getPosts();
-const [nextClass] = await getUpcomingClasses();
-const bake = await getCurrentBake();
+const { classes: showClasses, bake: showBake } = site.features;
+const selling = showClasses || showBake;
+const posts = await getPosts();
+// The Up next strip: a class and/or bake card when switched on, then posts to fill the row of three.
+const [nextClass] = showClasses ? await getUpcomingClasses() : [];
+const bake = showBake ? await getCurrentBake() : undefined;
+const postCards = posts.slice(0, 3 - Number(showClasses) - Number(showBake));
 const [featuredDish] = await getGallery();
 const fromPrice = bake && Math.min(...bake.data.items.map((i) => i.price));
 const seats = nextClass && seatStatus(nextClass.data);
@@ -28,14 +32,25 @@ const seats = nextClass && seatStatus(nextClass.data);
   <section class="wrap hero">
     <div class="hero__text">
       <p class="eyebrow">{site.area.label}</p>
-      <h1>Cook with me, bake with me, or come pick up something to eat.</h1>
+      <h1>{selling ? 'Cook with me, bake with me, or come pick up something to eat.' : 'Welcome to my Kitchen'}</h1>
       <p class="hero__lede muted">
-        I'm {site.chef}. I teach small, hands-on cooking and baking classes and put out a short bake menu most weeks,
-        all for pickup in {site.area.city}.
+        {
+          selling
+            ? `I'm ${site.chef}. I teach small, hands-on cooking and baking classes and put out a short bake menu most weeks, all for pickup in ${site.area.city}.`
+            : `I'm ${site.chef}, a chef in ${site.area.city}. Here's what I'm cooking, testing, and learning, plus the recipes I make again and again.`
+        }
       </p>
       <div class="hero__actions">
-        <a class="btn" href="/classes/">Book a class</a>
-        <a class="btn btn--ghost" href="/bake/">Order this week's bake</a>
+        {showClasses && <a class="btn" href="/classes/">Book a class</a>}
+        {showBake && <a class="btn btn--ghost" href="/bake/">Order this week's bake</a>}
+        {
+          !selling && (
+            <>
+              <a class="btn" href="/kitchen-notes/">Read Kitchen Notes</a>
+              <a class="btn btn--ghost" href="/recipes/">See my recipes</a>
+            </>
+          )
+        }
       </div>
     </div>
     <div class="hero__photo">
@@ -51,10 +66,10 @@ const seats = nextClass && seatStatus(nextClass.data);
   </section>
 
   <section class="wrap section upnext" aria-labelledby="upnext-heading">
-    <h2 id="upnext-heading">Up next</h2>
+    <h2 id="upnext-heading">{selling ? 'Up next' : 'Latest from Kitchen Notes'}</h2>
     <div class="upnext__grid">
       {
-        nextClass && seats ? (
+        showClasses && (nextClass && seats ? (
           <article class="card surface">
             <Photo src={nextClass.data.photo} alt={nextClass.data.photoAlt} placeholder="the class dish" sizes="(min-width: 860px) 33vw, 100vw" />
             <div class="card__body">
@@ -84,7 +99,7 @@ const seats = nextClass && seatStatus(nextClass.data);
               </a>
             </div>
           </article>
-        )
+        ))
       }
 
       {
@@ -112,18 +127,18 @@ const seats = nextClass && seatStatus(nextClass.data);
       }
 
       {
-        latestPost && (
+        postCards.map((post) => (
           <article class="card surface">
-            <Photo src={latestPost.data.photo} alt={latestPost.data.photoAlt} placeholder="from the latest post" sizes="(min-width: 860px) 33vw, 100vw" />
+            <Photo src={post.data.photo} alt={post.data.photoAlt} placeholder="from the latest post" sizes="(min-width: 860px) 33vw, 100vw" />
             <div class="card__body">
-              <p class="eyebrow">Kitchen Notes · {formatDate(latestPost.data.date)}</p>
+              <p class="eyebrow">Kitchen Notes · {formatDate(post.data.date)}</p>
               <h3>
-                <a class="card__title-link" href={`/kitchen-notes/${latestPost.id}/`}>
-                  {latestPost.data.title}
+                <a class="card__title-link" href={`/kitchen-notes/${post.id}/`}>
+                  {post.data.title}
                 </a>
               </h3>
               <ul class="tags">
-                {latestPost.data.tags.map((t) => (
+                {post.data.tags.map((t) => (
                   <li>
                     <a class="tag" href={`/kitchen-notes/tag/${t}/`}>
                       {t}
@@ -131,12 +146,12 @@ const seats = nextClass && seatStatus(nextClass.data);
                   </li>
                 ))}
               </ul>
-              <a class="card__link" href="/kitchen-notes/">
-                Read more Kitchen Notes
+              <a class="card__link" href={`/kitchen-notes/${post.id}/`}>
+                Read the note
               </a>
             </div>
           </article>
-        )
+        ))
       }
     </div>
   </section>

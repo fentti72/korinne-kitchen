@@ -8,7 +8,8 @@ interface Props {
   tagline?: boolean;
 }
 
-const { variant = 'inline', tagline = true } = Astro.props;
+// The tagline mentions classes, so it hides while classes are switched off.
+const { variant = 'inline', tagline = site.features.classes } = Astro.props;
 ---
 
 <span class:list={['logo', `logo--${variant}`]}>

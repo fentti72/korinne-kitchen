@@ -7,6 +7,9 @@ import NewsletterSignup from '../components/NewsletterSignup.astro';
 import { site } from '../site';
 import { getCurrentBake, itemStatus, formatDay, formatTime } from '../lib/content';
 
+// Hidden while switched off in src/site.ts.
+if (!site.features.bake) return Astro.redirect('/');
+
 const bake = await getCurrentBake();
 const Notes = bake && (await render(bake)).Content;
 const items = bake?.data.items.map((item, i) => ({ item, i, status: itemStatus(item) })) ?? [];

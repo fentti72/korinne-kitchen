@@ -8,6 +8,9 @@ import poster from '../assets/photos/about-school-poster.jpg';
 import chefWhites from '../assets/photos/about-chef-whites.jpg';
 import { getUpcomingClasses, seatStatus, formatDay, formatTime, formatDuration, TZ } from '../lib/content';
 
+// Hidden while switched off in src/site.ts.
+if (!site.features.classes) return Astro.redirect('/');
+
 const classes = await Promise.all(
   (await getUpcomingClasses()).map(async (c) => ({ c, seats: seatStatus(c.data), Body: (await render(c)).Content })),
 );

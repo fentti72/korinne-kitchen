@@ -1,9 +1,14 @@
+import { features } from './features';
+
 // Site-wide settings. Never put the home address here (or anywhere in this repo):
 // it only goes in post-purchase emails, stored as a server secret.
 export const site = {
+  features,
   name: "Korinne's Kitchen",
   chef: 'Korinne',
-  tagline: 'Home cooking, baking, and hands-on classes in Flower Mound, Texas.',
+  tagline: features.classes
+    ? 'Home cooking, baking, and hands-on classes in Flower Mound, Texas.'
+    : 'Home cooking and baking from a chef in Flower Mound, Texas.',
   area: {
     city: 'Flower Mound',
     region: 'TX',
@@ -16,8 +21,8 @@ export const site = {
   instagram: '',
   nav: [
     { href: '/kitchen-notes/', label: 'Kitchen Notes' },
-    { href: '/classes/', label: 'Classes' },
-    { href: '/bake/', label: "What I'm Baking" },
+    ...(features.classes ? [{ href: '/classes/', label: 'Classes' }] : []),
+    ...(features.bake ? [{ href: '/bake/', label: "What I'm Baking" }] : []),
     { href: '/recipes/', label: 'Recipes' },
     { href: '/gallery/', label: 'Gallery' },
     { href: '/about/', label: 'About' },
