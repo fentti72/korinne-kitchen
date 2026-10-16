@@ -17,6 +17,7 @@ const path = Astro.url.pathname;
 const shareImage = new URL('/images/brand/og-image.png', Astro.site);
 // The logo's own proportions (from its SVG viewBox), so the page reserves the right space before it loads.
 const LOGO = { src: '/images/brand/korinnes-kitchen-logo.svg', width: 546, height: 255 };
+const COOKIE = { src: '/images/brand/korinnes-kitchen-cookie.svg', width: 100, height: 100 };
 
 // Business structured data: area only, never a street address.
 const business = {
@@ -125,7 +126,7 @@ const business = {
       <div class="wrap">
         {footerSignup && <NewsletterSignup />}
         <a class="site-footer__logo" href="/">
-          <img src={LOGO.src} alt={site.name} width={LOGO.width} height={LOGO.height} loading="lazy" />
+          <img src={COOKIE.src} alt={site.name} width={COOKIE.width} height={COOKIE.height} loading="lazy" />
         </a>
         <p class="site-footer__meta">
           {site.name} · {site.area.label}
@@ -186,13 +187,13 @@ const business = {
   /* Height sets the size; width follows the logo's proportions, so it's never cropped or stretched. */
   .brand__logo {
     display: block;
-    height: 42px;
+    height: 60px;
     width: auto;
   }
 
   @media (min-width: 900px) {
     .brand__logo {
-      height: 60px;
+      height: 96px;
     }
   }
 
