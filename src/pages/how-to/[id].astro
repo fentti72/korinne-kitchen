@@ -34,14 +34,14 @@ const structured = {
 
   <article>
     <header class="wrap head">
-      <p class="eyebrow"><a href="/kitchen-notes/">Kitchen Notes</a> · {formatDate(p.date)}</p>
+      <p class="eyebrow"><a href="/how-to/">How-To</a> · {formatDate(p.date)}</p>
       <h1>{p.title}</h1>
       {
         p.tags.length > 0 && (
           <ul class="tags">
             {p.tags.map((t) => (
               <li>
-                <a class="tag" href={`/kitchen-notes/tag/${t}/`}>
+                <a class="tag" href={`/how-to/tag/${t}/`}>
                   {t}
                 </a>
               </li>
@@ -71,7 +71,7 @@ const structured = {
     {
       older && (
         <p class="older">
-          Older note: <a href={`/kitchen-notes/${older.id}/`}>{older.data.title}</a>
+          Older how-to: <a href={`/how-to/${older.id}/`}>{older.data.title}</a>
         </p>
       )
     }

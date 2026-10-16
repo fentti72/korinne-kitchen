@@ -15,12 +15,12 @@ const { posts, allTags, activeTag } = Astro.props;
 <nav class="filters" aria-label="Filter by tag">
   <ul class="tags">
     <li>
-      <a class="tag" href="/kitchen-notes/" aria-current={activeTag ? undefined : 'page'}>All</a>
+      <a class="tag" href="/how-to/" aria-current={activeTag ? undefined : 'page'}>All</a>
     </li>
     {
       allTags.map((t) => (
         <li>
-          <a class="tag" href={`/kitchen-notes/tag/${t}/`} aria-current={t === activeTag ? 'page' : undefined}>
+          <a class="tag" href={`/how-to/tag/${t}/`} aria-current={t === activeTag ? 'page' : undefined}>
             {t}
           </a>
         </li>
@@ -33,7 +33,7 @@ const { posts, allTags, activeTag } = Astro.props;
   {
     posts.map((post, i) => (
       <li class:list={['post', { 'post--lead': i === 0 }]}>
-        <a class="post__link" href={`/kitchen-notes/${post.id}/`}>
+        <a class="post__link" href={`/how-to/${post.id}/`}>
           <Photo
             src={post.data.photo}
             alt={post.data.photoAlt}
@@ -49,7 +49,7 @@ const { posts, allTags, activeTag } = Astro.props;
           <ul class="tags">
             {post.data.tags.map((t) => (
               <li>
-                <a class="tag" href={`/kitchen-notes/tag/${t}/`}>
+                <a class="tag" href={`/how-to/tag/${t}/`}>
                   {t}
                 </a>
               </li>

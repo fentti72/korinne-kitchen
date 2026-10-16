@@ -5,7 +5,7 @@ import { recipeCategories, type RecipeCategory } from './recipe-categories';
 
 const level = z.enum(['Beginner', 'Intermediate', 'Advanced', 'All levels']);
 
-// Kitchen Notes: short, photo-led posts.
+// How-To (formerly Kitchen Notes): short, photo-led posts.
 const posts = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/posts' }),
   schema: ({ image }) =>

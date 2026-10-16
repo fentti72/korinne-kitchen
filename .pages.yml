@@ -5,7 +5,7 @@ media:
 
 content:
   - name: posts
-    label: Kitchen Notes
+    label: How-To
     type: collection
     path: src/content/posts
     filename: "{year}-{month}-{day}-{primary}.md"

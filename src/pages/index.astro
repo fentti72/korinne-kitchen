@@ -44,7 +44,7 @@ const seats = nextClass && seatStatus(nextClass.data);
         {
           !selling && (
             <>
-              <a class="btn" href="/kitchen-notes/">Read Kitchen Notes</a>
+              <a class="btn" href="/how-to/">Explore How-To</a>
               <a class="btn btn--ghost" href="/recipes/">See my recipes</a>
             </>
           )
@@ -54,7 +54,7 @@ const seats = nextClass && seatStatus(nextClass.data);
   </section>
 
   <section class="wrap section upnext" aria-labelledby="upnext-heading">
-    <h2 id="upnext-heading">{selling ? 'Up next' : 'Latest from Kitchen Notes'}</h2>
+    <h2 id="upnext-heading">{selling ? 'Up next' : "Latest from How-To"}</h2>
     <div class="upnext__grid">
       {
         showClasses && (nextClass && seats ? (
@@ -119,23 +119,23 @@ const seats = nextClass && seatStatus(nextClass.data);
           <article class="card surface">
             <Photo src={post.data.photo} alt={post.data.photoAlt} placeholder="from the latest post" sizes="(min-width: 860px) 33vw, 100vw" />
             <div class="card__body">
-              <p class="eyebrow">Kitchen Notes · {formatDate(post.data.date)}</p>
+              <p class="eyebrow">How-To · {formatDate(post.data.date)}</p>
               <h3>
-                <a class="card__title-link" href={`/kitchen-notes/${post.id}/`}>
+                <a class="card__title-link" href={`/how-to/${post.id}/`}>
                   {post.data.title}
                 </a>
               </h3>
               <ul class="tags">
                 {post.data.tags.map((t) => (
                   <li>
-                    <a class="tag" href={`/kitchen-notes/tag/${t}/`}>
+                    <a class="tag" href={`/how-to/tag/${t}/`}>
                       {t}
                     </a>
                   </li>
                 ))}
               </ul>
-              <a class="card__link" href={`/kitchen-notes/${post.id}/`}>
-                Read the note
+              <a class="card__link" href={`/how-to/${post.id}/`}>
+                Read the how-to
               </a>
             </div>
           </article>

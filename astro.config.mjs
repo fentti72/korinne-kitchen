@@ -13,7 +13,12 @@ export default defineConfig({
       name: 'hidden-page-redirects',
       hooks: {
         'astro:build:done': async ({ dir }) => {
-          const rules = hiddenPaths.flatMap((path) => [`${path} / 302!`, `${path}/* / 302!`]);
+          const rules = [
+            ...hiddenPaths.flatMap((path) => [`${path} / 302!`, `${path}/* / 302!`]),
+            // Kitchen Notes was renamed How-To; old links keep working.
+            '/kitchen-notes /how-to/ 301!',
+            '/kitchen-notes/* /how-to/:splat 301!',
+          ];
           await writeFile(new URL('_redirects', dir), rules.join('\n') + '\n');
         },
       },

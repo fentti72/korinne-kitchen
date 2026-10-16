@@ -21,7 +21,7 @@ export const site = {
   newsletterAction: '',
   instagram: '',
   nav: [
-    { href: '/kitchen-notes/', label: 'Kitchen Notes' },
+    { href: '/how-to/', label: 'How-To' },
     ...(features.classes ? [{ href: '/classes/', label: 'Classes' }] : []),
     ...(features.bake ? [{ href: '/bake/', label: "What I'm Baking" }] : []),
     {

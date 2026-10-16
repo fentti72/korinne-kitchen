@@ -1,6 +1,6 @@
 # Korinne's Kitchen
 
-The website for Korinne, a chef in Flower Mound, Texas: Kitchen Notes (blog), signature dishes, recipes, in-person classes, and weekly pickup bake drops.
+The website for Korinne, a chef in Flower Mound, Texas: How-To (blog, formerly Kitchen Notes), signature dishes, recipes, in-person classes, and weekly pickup bake drops.
 
 - **Site:** [Astro](https://astro.build), hosted on Netlify.
 - **Editing:** [Pages CMS](https://pagescms.org) (configured in `.pages.yml`). Content lives in `src/content/`.
@@ -11,7 +11,7 @@ The website for Korinne, a chef in Flower Mound, Texas: Kitchen Notes (blog), si
 | Page | Path | Content lives in |
 |---|---|---|
 | Home | `/` | pulls from classes, bake drops, posts, gallery |
-| Kitchen Notes | `/kitchen-notes/` (+ tag pages) | `src/content/posts` |
+| How-To | `/how-to/` (+ tag pages) | `src/content/posts` |
 | Signature dishes | `/gallery/` | `src/content/gallery` |
 | Recipes | `/recipes/` | `src/content/recipes` |
 | Take a Class | `/classes/` | `src/content/classes` |
