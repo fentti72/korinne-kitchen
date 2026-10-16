@@ -15,9 +15,9 @@ const {
 const id = 'signup';
 ---
 
-<section class="signup surface" aria-labelledby={`${id}-heading`}>
+<section class="signup" aria-labelledby={`${id}-heading`}>
   <h2 id={`${id}-heading`}>{heading}</h2>
-  <p class="muted">{blurb}</p>
+  <p>{blurb}</p>
   <form method="post" action={site.newsletterAction || undefined} class="signup__form">
     <label class="visually-hidden" for={`${id}-email`}>Email address</label>
     <input id={`${id}-email`} type="email" name="email" required autocomplete="email" placeholder="you@example.com" />
@@ -26,8 +26,13 @@ const id = 'signup';
 </section>
 
 <style>
+  /* Sage band with cream text; the button flips to cream so it stands out on the green. */
   .signup {
     padding: clamp(1.5rem, 5vw, 3rem);
+    border-radius: var(--radius);
+    background: var(--band-bg);
+    color: var(--band-text);
+    --focus: var(--band-text);
   }
 
   .signup h2 {
@@ -50,7 +55,7 @@ const id = 'signup';
     flex: 1 1 15rem;
     min-height: 48px;
     padding: 0 1.1rem;
-    border: 1.5px solid var(--text-muted);
+    border: 1.5px solid var(--band-text);
     border-radius: 999px;
     background: var(--bg);
     color: var(--text);
@@ -63,5 +68,14 @@ const id = 'signup';
 
   .btn {
     flex: 0 0 auto;
+    background: var(--band-action);
+    border-color: var(--band-action);
+    color: var(--band-action-text);
+  }
+
+  .btn:hover {
+    background: var(--action-hover);
+    border-color: var(--band-text);
+    color: var(--band-text);
   }
 </style>
