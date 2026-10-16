@@ -9,7 +9,7 @@ export async function getStaticPaths() {
   // Every category gets a page, even before it has recipes, so the menu never leads nowhere.
   return recipeCategories.map((c) => ({
     params: { category: c.slug },
-    props: { category: c, recipes: recipes.filter((r) => r.data.category === c.slug) },
+    props: { category: c, recipes: recipes.filter((r) => r.data.categories.includes(c.slug)) },
   }));
 }
 

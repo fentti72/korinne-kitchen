@@ -77,7 +77,7 @@ const recipes = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
-      category: z.enum(recipeCategories.map((c) => c.slug) as [RecipeCategory, ...RecipeCategory[]]),
+      categories: z.array(z.enum(recipeCategories.map((c) => c.slug) as [RecipeCategory, ...RecipeCategory[]])).min(1),
       summary: z.string().default(''),
       servings: z.number().int().positive(),
       prepMinutes: z.number().int().nonnegative(),

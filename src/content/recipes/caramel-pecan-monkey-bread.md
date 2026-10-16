@@ -1,6 +1,6 @@
 ---
 title: Caramel Pecan Monkey Bread
-category: breads
+categories: [breads]
 summary: PLACEHOLDER RECIPE — Korinne will replace this with her own. Pull-apart brioche rolled in cinnamon sugar and baked in a caramel pecan glaze.
 servings: 12
 prepMinutes: 40

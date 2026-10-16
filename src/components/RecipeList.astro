@@ -33,7 +33,7 @@ const { recipes, activeCategory } = Astro.props;
   {
     recipes.length === 0 && (
       <p class="surface empty">
-        No {activeCategory ? categoryLabel(activeCategory).toLowerCase() : 'recipes'} here yet. Check back soon, or{' '}
+        {activeCategory ? `Nothing in ${categoryLabel(activeCategory)} yet.` : 'No recipes yet.'} Check back soon, or{' '}
         <a href="/recipes/">browse all recipes</a>.
       </p>
     )
@@ -46,7 +46,7 @@ const { recipes, activeCategory } = Astro.props;
           <a class="recipe-card__link" href={`/recipes/${r.id}/`}>
             <Photo src={r.data.photo} alt={r.data.photoAlt} placeholder={r.data.title} sizes="(min-width: 760px) 50vw, 100vw" />
             <div class="recipe-card__body">
-              <p class="eyebrow">{categoryLabel(r.data.category)}</p>
+              <p class="eyebrow">{r.data.categories.map(categoryLabel).join(' · ')}</p>
               <h2>{r.data.title}</h2>
               <p class="muted">
                 {formatDuration(r.data.prepMinutes + r.data.cookMinutes)} · Serves {r.data.servings}

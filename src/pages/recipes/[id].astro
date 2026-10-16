@@ -31,7 +31,8 @@ const structured = {
   description: r.summary,
   author: { '@type': 'Person', name: site.chef },
   ...(photoUrl ? { image: new URL(photoUrl, Astro.site).toString() } : {}),
-  recipeCategory: categoryLabel(r.category),
+  recipeCategory: r.categories.map(categoryLabel).join(', '),
+  ...(r.categories.includes('gluten-free') ? { suitableForDiet: 'https://schema.org/GlutenFreeDiet' } : {}),
   recipeYield: `${r.servings} servings`,
   prepTime: iso(r.prepMinutes),
   cookTime: iso(r.cookMinutes),
@@ -47,7 +48,15 @@ const structured = {
 
   <article class="recipe">
     <header class="wrap recipe__head">
-      <p class="eyebrow"><a href="/recipes/">Recipes</a> · <a href={categoryHref(r.category)}>{categoryLabel(r.category)}</a></p>
+      <p class="eyebrow">
+        <a href="/recipes/">Recipes</a>
+        {r.categories.map((c) => (
+          <>
+            {' · '}
+            <a href={categoryHref(c)}>{categoryLabel(c)}</a>
+          </>
+        ))}
+      </p>
       <h1>{r.title}</h1>
       {r.summary && <p class="muted lede">{r.summary}</p>}
       <dl class="times">

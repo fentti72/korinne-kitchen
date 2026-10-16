@@ -85,17 +85,20 @@ content:
     filename: "{primary}.md"
     fields:
       - { name: title, label: Recipe name, type: string, required: true }
-      - name: category
-        label: Category
+      - name: categories
+        label: Categories (pick all that fit)
         type: select
         required: true
         options:
+          multiple: true
           values:
             - { value: breads, label: Breads }
             - { value: desserts, label: Desserts }
             - { value: cookies, label: Cookies }
             - { value: main-dishes, label: Main Dishes }
             - { value: side-dishes, label: Side Dishes }
+            - { value: gluten-free, label: Gluten Free }
+            - { value: dairy-free, label: Dairy Free }
       - { name: summary, label: Short intro, type: text }
       - { name: servings, label: Servings, type: number, required: true }
       - { name: prepMinutes, label: Prep time (minutes), type: number, required: true }
