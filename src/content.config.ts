@@ -77,6 +77,8 @@ const recipes = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
+      // When it was posted; the homepage shows the newest recipes first.
+      date: z.coerce.date(),
       categories: z.array(z.enum(recipeCategories.map((c) => c.slug) as [RecipeCategory, ...RecipeCategory[]])).min(1),
       summary: z.string().default(''),
       servings: z.number().int().positive(),

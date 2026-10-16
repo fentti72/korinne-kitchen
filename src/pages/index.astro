@@ -3,8 +3,9 @@ import Base from '../layouts/Base.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
 import Photo from '../components/Photo.astro';
 import { site } from '../site';
+import { categoryHref, categoryLabel } from '../recipe-categories';
 import {
-  getPosts,
+  getNewestRecipes,
   getUpcomingClasses,
   getCurrentBake,
   getGallery,
@@ -17,11 +18,11 @@ import {
 
 const { classes: showClasses, bake: showBake } = site.features;
 const selling = showClasses || showBake;
-const posts = await getPosts();
-// The Up next strip: a class and/or bake card when switched on, then posts to fill the row of three.
+const recipes = await getNewestRecipes();
+// The strip of three: a class and/or bake card when switched on, then the newest recipes to fill the row.
 const [nextClass] = showClasses ? await getUpcomingClasses() : [];
 const bake = showBake ? await getCurrentBake() : undefined;
-const postCards = posts.slice(0, 3 - Number(showClasses) - Number(showBake));
+const recipeCards = recipes.slice(0, 3 - Number(showClasses) - Number(showBake));
 const [featuredDish] = site.features.gallery ? await getGallery() : [];
 const fromPrice = bake && Math.min(...bake.data.items.map((i) => i.price));
 const seats = nextClass && seatStatus(nextClass.data);
@@ -54,7 +55,7 @@ const seats = nextClass && seatStatus(nextClass.data);
   </section>
 
   <section class="wrap section upnext" aria-labelledby="upnext-heading">
-    <h2 id="upnext-heading">{selling ? 'Up next' : "Latest from How-To"}</h2>
+    <h2 id="upnext-heading">{selling ? 'Up next' : "Check out what's new"}</h2>
     <div class="upnext__grid">
       {
         showClasses && (nextClass && seats ? (
@@ -115,27 +116,27 @@ const seats = nextClass && seatStatus(nextClass.data);
       }
 
       {
-        postCards.map((post) => (
+        recipeCards.map((r) => (
           <article class="card surface">
-            <Photo src={post.data.photo} alt={post.data.photoAlt} placeholder="from the latest post" sizes="(min-width: 860px) 33vw, 100vw" />
+            <Photo src={r.data.photo} alt={r.data.photoAlt} placeholder={r.data.title} sizes="(min-width: 860px) 33vw, 100vw" />
             <div class="card__body">
-              <p class="eyebrow">How-To · {formatDate(post.data.date)}</p>
+              <p class="eyebrow">New recipe · {formatDate(r.data.date)}</p>
               <h3>
-                <a class="card__title-link" href={`/how-to/${post.id}/`}>
-                  {post.data.title}
+                <a class="card__title-link" href={`/recipes/${r.id}/`}>
+                  {r.data.title}
                 </a>
               </h3>
               <ul class="tags">
-                {post.data.tags.map((t) => (
+                {r.data.categories.map((c) => (
                   <li>
-                    <a class="tag" href={`/how-to/tag/${t}/`}>
-                      {t}
+                    <a class="tag" href={categoryHref(c)}>
+                      {categoryLabel(c)}
                     </a>
                   </li>
                 ))}
               </ul>
-              <a class="card__link" href={`/how-to/${post.id}/`}>
-                Read the how-to
+              <a class="card__link" href={`/recipes/${r.id}/`}>
+                Get the recipe
               </a>
             </div>
           </article>
@@ -196,9 +197,10 @@ const seats = nextClass && seatStatus(nextClass.data);
     gap: 1.5rem;
   }
 
+  /* Up to three across; with fewer cards they share the full width instead of leaving a gap. */
   @media (min-width: 860px) {
     .upnext__grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     }
   }
 

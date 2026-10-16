@@ -85,6 +85,7 @@ content:
     filename: "{primary}.md"
     fields:
       - { name: title, label: Recipe name, type: string, required: true }
+      - { name: date, label: Date posted, type: date, required: true }
       - name: categories
         label: Categories (pick all that fit)
         type: select

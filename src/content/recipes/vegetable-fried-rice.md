@@ -1,5 +1,6 @@
 ---
 title: Weeknight Vegetable Fried Rice
+date: 2026-10-10
 categories: [main-dishes, dairy-free]
 summary: PLACEHOLDER RECIPE — Korinne will replace this with her own. Day-old rice, a hot pan, and whatever vegetables are in the fridge.
 servings: 4

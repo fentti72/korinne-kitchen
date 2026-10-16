@@ -72,3 +72,8 @@ export function getAllTags(posts: { data: { tags: string[] } }[]) {
 export async function getRecipes() {
   return (await getCollection('recipes', live)).sort((a, b) => a.data.title.localeCompare(b.data.title));
 }
+
+/** Recipes, most recently posted first. */
+export async function getNewestRecipes() {
+  return (await getCollection('recipes', live)).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+}
