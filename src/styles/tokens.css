@@ -44,8 +44,8 @@
   /* Semantic: the sage newsletter band */
   --band-bg: var(--color-accent);
   --band-text: var(--color-flour); /* 4.9:1 on the band (oat is only 4.0:1) */
-  --band-action: var(--color-flour); /* button fill */
-  --band-action-text: var(--color-accent-dark); /* 6.9:1 */
+  --band-action: var(--color-oat); /* button fill; edge 4.0:1 against the band */
+  --band-action-text: var(--color-accent-dark); /* 5.6:1 on oat */
   --focus-on-dark: var(--color-flour);
 
   /* Semantic: badges and tags */
