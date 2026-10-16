@@ -49,8 +49,9 @@
   --tag-accent: var(--color-sage);
 
   /* Type */
-  --font-serif: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
   --font-sans: 'DM Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Headings and titles: DM Sans Medium, the logo's lettering. */
+  --font-display: var(--font-sans);
 
   /* Space and shape */
   --radius: 12px;

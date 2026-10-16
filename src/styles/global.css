@@ -1,4 +1,3 @@
-@import '@fontsource-variable/fraunces';
 @import '@fontsource-variable/dm-sans';
 @import './tokens.css';
 
@@ -22,12 +21,16 @@ body {
 h1,
 h2,
 h3 {
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-weight: 500;
-  line-height: 1.12;
-  letter-spacing: -0.01em;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
   margin: 0 0 0.5em;
-  font-optical-sizing: auto;
+}
+
+h1 {
+  letter-spacing: -0.03em;
+  line-height: 1.08;
 }
 
 h1 {
