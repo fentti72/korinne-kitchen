@@ -5,7 +5,7 @@ import { hiddenPaths } from './src/features';
 
 export default defineConfig({
   // Replace with the real domain once it's connected.
-  site: 'https://korinnekitchen.com',
+  site: 'https://korinneskitchen.com',
   integrations: [
     {
       // Netlify redirects hidden pages to the homepage on the server, before any page loads.

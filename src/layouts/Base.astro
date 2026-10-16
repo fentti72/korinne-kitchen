@@ -1,10 +1,7 @@
 ---
 import '../styles/global.css';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
-import Logo from '../components/Logo.astro';
-import { getImage } from 'astro:assets';
 import { site } from '../site';
-import sharePhoto from '../assets/photos/about-portrait.jpg';
 
 interface Props {
   title?: string;
@@ -17,7 +14,9 @@ const { title, description = site.tagline, footerSignup = true } = Astro.props;
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.area.label}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const path = Astro.url.pathname;
-const shareImage = new URL((await getImage({ src: sharePhoto, width: 1200, format: 'jpg' })).src, Astro.site);
+const shareImage = new URL('/images/brand/og-image.png', Astro.site);
+// The logo's own proportions (from its SVG viewBox), so the page reserves the right space before it loads.
+const LOGO = { src: '/images/brand/korinnes-kitchen-logo.svg', width: 546, height: 255 };
 
 // Business structured data: area only, never a street address.
 const business = {
@@ -26,6 +25,8 @@ const business = {
   name: site.name,
   description: site.tagline,
   url: Astro.site?.toString(),
+  logo: new URL('/images/brand/korinnes-kitchen-logo.png', Astro.site).toString(),
+  image: shareImage.toString(),
   founder: { '@type': 'Person', name: site.chef },
   areaServed: { '@type': 'City', name: `${site.area.city}, ${site.area.region}` },
   address: {
@@ -53,9 +54,16 @@ const business = {
     <meta property="og:url" content={canonical} />
     <meta property="og:type" content="website" />
     <meta property="og:image" content={shareImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Korinne's Kitchen logo" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#f7f1e8" />
+    <meta name="twitter:image" content={shareImage} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#F7F1E8" />
     <script type="application/ld+json" set:html={JSON.stringify(business)} />
     <slot name="head" />
   </head>
@@ -63,7 +71,9 @@ const business = {
     <a class="skip" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="wrap site-header__inner">
-        <a class="brand" href="/" aria-label={`${site.name}, home`}><Logo /></a>
+        <a class="brand" href="/">
+          <img class="brand__logo" src={LOGO.src} alt={site.name} width={LOGO.width} height={LOGO.height} />
+        </a>
         <details class="menu">
           <summary>Menu</summary>
           <nav aria-label="Main">
@@ -88,7 +98,7 @@ const business = {
                           </svg>
                         </button>
                         <ul class="sub" id={`sub-${item.label}`}>
-                          {item.children.map((child) => (
+                          {item.children?.map((child) => (
                             <li>
                               <a href={child.href} aria-current={path === child.href ? 'page' : undefined}>
                                 {child.label}
@@ -114,7 +124,9 @@ const business = {
     <footer class="site-footer">
       <div class="wrap">
         {footerSignup && <NewsletterSignup />}
-        <a class="site-footer__logo" href="/" aria-label={`${site.name}, home`}><Logo variant="stacked" /></a>
+        <a class="site-footer__logo" href="/">
+          <img src={LOGO.src} alt={site.name} width={LOGO.width} height={LOGO.height} loading="lazy" />
+        </a>
         <p class="site-footer__meta">
           {site.name} · {site.area.label}
           {(site.features.classes || site.features.bake) && (
@@ -168,7 +180,20 @@ const business = {
   .brand {
     display: inline-flex;
     padding: 0.5rem 0;
-    text-decoration: none;
+    flex: none;
+  }
+
+  /* Height sets the size; width follows the logo's proportions, so it's never cropped or stretched. */
+  .brand__logo {
+    display: block;
+    height: 42px;
+    width: auto;
+  }
+
+  @media (min-width: 900px) {
+    .brand__logo {
+      height: 60px;
+    }
   }
 
   .menu summary {
@@ -331,7 +356,12 @@ const business = {
     justify-content: center;
     margin: 3rem auto 0;
     width: fit-content;
-    text-decoration: none;
+  }
+
+  .site-footer__logo img {
+    display: block;
+    height: 80px;
+    width: auto;
   }
 
   .site-footer__meta {
