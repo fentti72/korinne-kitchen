@@ -128,7 +128,8 @@ const business = {
       <div class="wrap">
         {footerSignup && <NewsletterSignup />}
         <a class="site-footer__logo" href="/">
-          <img src={COOKIE.src} alt={site.name} width={COOKIE.width} height={COOKIE.height} loading="lazy" />
+          <img class="site-footer__cookie" src={COOKIE.src} alt="" width={COOKIE.width} height={COOKIE.height} loading="lazy" />
+          <img class="site-footer__name" src={LOGO_WIDE.src} alt={site.name} width={LOGO_WIDE.width} height={LOGO_WIDE.height} loading="lazy" />
         </a>
         <p class="site-footer__meta">
           {site.name} · {site.area.label}
@@ -357,17 +358,28 @@ const business = {
     border-top: 1px solid var(--line);
   }
 
+  /* Cookie on top, the one-line logo beneath it. */
   .site-footer__logo {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
     margin: 3rem auto 0;
     width: fit-content;
+    max-width: 100%;
   }
 
-  .site-footer__logo img {
+  .site-footer__cookie {
     display: block;
     height: 80px;
     width: auto;
+  }
+
+  .site-footer__name {
+    display: block;
+    width: 280px;
+    max-width: 100%;
+    height: auto;
   }
 
   .site-footer__meta {
