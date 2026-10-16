@@ -61,6 +61,7 @@ a {
 }
 
 a:hover {
+  color: var(--link-hover);
   text-decoration-thickness: 2px;
 }
 
@@ -92,7 +93,7 @@ a:hover {
   margin: 0 0 0.75em;
 }
 
-/* Buttons: the only place terracotta is used as a fill. */
+/* Buttons: the only place the accent green is used as a fill. */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -115,6 +116,7 @@ a:hover {
 .btn:hover {
   background: var(--action-hover);
   border-color: var(--action-hover);
+  color: var(--action-text);
   text-decoration: none;
 }
 
@@ -124,8 +126,8 @@ a:hover {
 }
 
 .btn--ghost:hover {
-  background: var(--action);
-  border-color: var(--action);
+  background: var(--action-hover);
+  border-color: var(--action-hover);
   color: var(--action-text);
 }
 
@@ -170,7 +172,7 @@ a.tag:hover {
   padding: 0;
 }
 
-/* Cards and other oat surfaces: links switch to the darker terracotta for contrast. */
+/* Cards and other oat surfaces: links switch to the darker green for contrast. */
 .surface {
   background: var(--surface);
   border-radius: var(--radius);
