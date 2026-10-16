@@ -19,6 +19,11 @@ const shareImage = new URL('/images/brand/og-image.png', Astro.site);
 const LOGO = { src: '/images/brand/korinnes-kitchen-logo.svg', width: 546, height: 255 };
 // One-line version for the header (built from the logo's own shapes, laid out per Korinne's reference).
 const LOGO_WIDE = { src: '/images/brand/korinnes-kitchen-logo-horizontal.svg', width: 1017, height: 146 };
+// Small links under the footer logo; the line disappears when there are none.
+const footerLinks = [
+  ...(site.features.classes || site.features.bake ? [{ href: '/policies/', label: 'Policies' }] : []),
+  ...(site.instagram ? [{ href: `https://instagram.com/${site.instagram}`, label: 'Instagram' }] : []),
+];
 const COOKIE = { src: '/images/brand/korinnes-kitchen-cookie.svg', width: 100, height: 100 };
 
 // Business structured data: area only, never a street address.
@@ -131,21 +136,18 @@ const business = {
           <img class="site-footer__cookie" src={COOKIE.src} alt="" width={COOKIE.width} height={COOKIE.height} loading="lazy" />
           <img class="site-footer__name" src={LOGO_WIDE.src} alt={site.name} width={LOGO_WIDE.width} height={LOGO_WIDE.height} loading="lazy" />
         </a>
-        <p class="site-footer__meta">
-          {site.name} · {site.area.label}
-          {(site.features.classes || site.features.bake) && (
-            <>
-              {' · '}
-              <a href="/policies/">Policies</a>
-            </>
-          )}
-          {site.instagram && (
-            <>
-              {' · '}
-              <a href={`https://instagram.com/${site.instagram}`}>Instagram</a>
-            </>
-          )}
-        </p>
+        {
+          footerLinks.length > 0 && (
+            <p class="site-footer__meta">
+              {footerLinks.map((l, i) => (
+                <>
+                  {i > 0 && ' · '}
+                  <a href={l.href}>{l.label}</a>
+                </>
+              ))}
+            </p>
+          )
+        }
       </div>
     </footer>
   </body>
