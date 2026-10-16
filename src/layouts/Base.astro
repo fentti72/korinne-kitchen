@@ -24,7 +24,7 @@ const footerLinks = [
   ...(site.features.classes || site.features.bake ? [{ href: '/policies/', label: 'Policies' }] : []),
   ...(site.instagram ? [{ href: `https://instagram.com/${site.instagram}`, label: 'Instagram' }] : []),
 ];
-const COOKIE = { src: '/images/brand/korinnes-kitchen-cookie.svg', width: 100, height: 100 };
+const STAMP = { src: '/images/brand/korinnes-kitchen-stamp-cookie-terracotta.svg', width: 1200, height: 1200 };
 
 // Business structured data: area only, never a street address.
 const business = {
@@ -133,8 +133,7 @@ const business = {
       <div class="wrap">
         {footerSignup && <NewsletterSignup />}
         <a class="site-footer__logo" href="/">
-          <img class="site-footer__cookie" src={COOKIE.src} alt="" width={COOKIE.width} height={COOKIE.height} loading="lazy" />
-          <img class="site-footer__name" src={LOGO_WIDE.src} alt={site.name} width={LOGO_WIDE.width} height={LOGO_WIDE.height} loading="lazy" />
+          <img class="site-footer__stamp" src={STAMP.src} alt={`${site.name}: good food for all`} width={STAMP.width} height={STAMP.height} loading="lazy" />
         </a>
         {
           footerLinks.length > 0 && (
@@ -360,27 +359,18 @@ const business = {
     border-top: 1px solid var(--line);
   }
 
-  /* Cookie on top, the one-line logo beneath it. */
+  /* Round stamp logo; big enough that the lettering around the edge stays readable. */
   .site-footer__logo {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+    justify-content: center;
     margin: 3rem auto 0;
     width: fit-content;
-    max-width: 100%;
+    border-radius: 50%;
   }
 
-  .site-footer__cookie {
+  .site-footer__stamp {
     display: block;
-    height: 80px;
-    width: auto;
-  }
-
-  .site-footer__name {
-    display: block;
-    width: 280px;
-    max-width: 100%;
+    width: 150px;
     height: auto;
   }
 
