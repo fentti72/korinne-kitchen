@@ -55,7 +55,7 @@ const business = {
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {/* Keep the site out of search results until launch: set SITE_LIVE=true in Netlify when it's ready. */}
+    {/* Keep the site out of search results until launch: set the SITE_LIVE=true build variable in Cloudflare when it's ready. */}
     {import.meta.env.SITE_LIVE !== 'true' && <meta name="robots" content="noindex, nofollow" />}
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />

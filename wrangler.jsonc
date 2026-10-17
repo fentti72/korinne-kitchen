@@ -1,0 +1,11 @@
+// Cloudflare hosting. The site is fully static: Cloudflare builds it with `npm run build`
+// and serves the `dist` folder. Redirects come from `dist/_redirects`, written at build.
+{
+  "name": "korinne-kitchen",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}
