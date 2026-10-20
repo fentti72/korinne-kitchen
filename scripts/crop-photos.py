@@ -44,6 +44,8 @@ PICKS = {
     'blog-birthday-31-cake': ('IMG_2841.jpg', (0.08, 0.20, 0.80, 0.98), 'blog'),
     'blog-first-birthday-cake': ('IMG_4621.jpg', (0.0, 0.05, 1.0, 0.95), 'blog'),
     'blog-rosette-cake': ('IMG_0277.jpg', (0.0, 0.0, 1.0, 1.0), 'blog'),
+    # Recipes
+    'recipe-healthy-pancakes': ('healthy-pancakes.jpg', (0.03, 0.17, 0.97, 0.80), 'recipes'),
 }
 
 for name, (src, (l, t, r, b), page) in PICKS.items():
