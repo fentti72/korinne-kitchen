@@ -55,7 +55,8 @@ import cake from '../assets/photos/about-chocolate-cake.jpg';
     </div>
   </section>
 
-  <section class="wrap section beliefs">
+  <section class="dark beliefs-band">
+    <div class="wrap beliefs">
     <div>
       <h2>Things I don't believe in</h2>
       <ul>
@@ -69,8 +70,9 @@ import cake from '../assets/photos/about-chocolate-cake.jpg';
       <ul>
         <li>Gooey cookies</li>
         <li>Jesus Christ</li>
-        <li>Good food makes a good life</li>
+        <li>Good food makes a good life <span role="img" aria-label="smiley face">🙂</span></li>
       </ul>
+    </div>
     </div>
   </section>
 
@@ -167,6 +169,10 @@ import cake from '../assets/photos/about-chocolate-cake.jpg';
     font-size: 1.1rem;
   }
 
+  .beliefs-band {
+    padding-block: var(--space-section);
+  }
+
   .beliefs {
     display: grid;
     gap: 2.5rem;
@@ -189,8 +195,9 @@ import cake from '../assets/photos/about-chocolate-cake.jpg';
     margin-top: 0.6rem;
   }
 
+  /* Lighter sage: the main accent is too dark to see on espresso. */
   .beliefs li::marker {
-    color: var(--color-accent);
+    color: var(--color-sage);
   }
 
   .cta {
