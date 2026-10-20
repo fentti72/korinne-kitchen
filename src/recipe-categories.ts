@@ -2,6 +2,7 @@
 // and in each recipe's `categories` list; the label is what visitors see. A recipe can be in
 // several, e.g. Desserts and Gluten Free.
 export const recipeCategories = [
+  { slug: 'breakfast', label: 'Breakfast' },
   { slug: 'breads', label: 'Breads' },
   { slug: 'desserts', label: 'Desserts' },
   { slug: 'cookies', label: 'Cookies' },

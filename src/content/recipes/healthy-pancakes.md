@@ -1,14 +1,13 @@
 ---
 title: Healthy Pancakes
 date: 2026-10-20
-categories: [breads, gluten-free, dairy-free]
+categories: [breakfast, breads, gluten-free, dairy-free]
 summary: Banana and honey sweeten these blueberry pancakes. Use any flour blend you like, from oat flour to gluten-free.
 servings: 4
 prepMinutes: 10
 cookMinutes: 15
 photo: ../../assets/photos/recipe-healthy-pancakes.jpg
 photoAlt: Three blueberry pancakes on a white plate, each topped with a pat of butter and maple syrup
-tags: [breakfast]
 ingredients:
   - { amount: 1, item: "banana, mashed" }
   - { amount: 2, unit: tbsp, item: honey }

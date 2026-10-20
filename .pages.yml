@@ -93,6 +93,7 @@ content:
         options:
           multiple: true
           values:
+            - { value: breakfast, label: Breakfast }
             - { value: breads, label: Breads }
             - { value: desserts, label: Desserts }
             - { value: cookies, label: Cookies }
