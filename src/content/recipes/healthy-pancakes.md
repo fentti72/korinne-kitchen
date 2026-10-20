@@ -1,7 +1,7 @@
 ---
 title: Healthy Pancakes
 date: 2026-10-20
-categories: [breads]
+categories: [breads, gluten-free, dairy-free]
 summary: Banana and honey sweeten these blueberry pancakes. Use any flour blend you like, from oat flour to gluten-free.
 servings: 4
 prepMinutes: 10
