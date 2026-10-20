@@ -118,7 +118,10 @@ const seats = nextClass && seatStatus(nextClass.data);
       {
         recipeCards.map((r) => (
           <article class="card surface">
-            <Photo src={r.data.photo} alt={r.data.photoAlt} placeholder={r.data.title} sizes="(min-width: 860px) 33vw, 100vw" />
+            {/* A second way in for mouse and touch; keyboards and screen readers use the title link instead. */}
+            <a class="card__photo-link" href={`/recipes/${r.id}/`} tabindex="-1" aria-hidden="true">
+              <Photo src={r.data.photo} alt={r.data.photoAlt} placeholder={r.data.title} sizes="(min-width: 860px) 33vw, 100vw" />
+            </a>
             <div class="card__body">
               <p class="eyebrow">New recipe · {formatDate(r.data.date)}</p>
               <h3>
@@ -230,6 +233,10 @@ const seats = nextClass && seatStatus(nextClass.data);
 
   .card .card__title-link:hover {
     text-decoration: underline;
+  }
+
+  .card__photo-link {
+    display: block;
   }
 
   .card__meta {
