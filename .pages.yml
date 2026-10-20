@@ -93,12 +93,12 @@ content:
         options:
           multiple: true
           values:
-            - { value: breakfast, label: Breakfast }
-            - { value: breads, label: Breads }
             - { value: desserts, label: Desserts }
             - { value: cookies, label: Cookies }
+            - { value: breads, label: Breads }
             - { value: main-dishes, label: Main Dishes }
             - { value: side-dishes, label: Side Dishes }
+            - { value: breakfast, label: Breakfast }
             - { value: gluten-free, label: Gluten Free }
             - { value: dairy-free, label: Dairy Free }
       - { name: summary, label: Short intro, type: text }
