@@ -55,6 +55,25 @@ import cake from '../assets/photos/about-chocolate-cake.jpg';
     </div>
   </section>
 
+  <section class="wrap section beliefs">
+    <div>
+      <h2>Things I don't believe in</h2>
+      <ul>
+        <li>Making you scroll through my life story to get to a recipe</li>
+        <li>Over complications</li>
+        <li>Secret recipes</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Things I do believe in</h2>
+      <ul>
+        <li>Gooey cookies</li>
+        <li>Jesus Christ</li>
+        <li>Good food makes a good life</li>
+      </ul>
+    </div>
+  </section>
+
   <div class="wrap cta-wrap">
   <section class="cta surface" aria-labelledby="cta-heading">
     <div class="cta__photo">
@@ -146,6 +165,32 @@ import cake from '../assets/photos/about-chocolate-cake.jpg';
   .chapter__text p {
     max-width: var(--measure);
     font-size: 1.1rem;
+  }
+
+  .beliefs {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 760px) {
+    .beliefs {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+  }
+
+  .beliefs ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: 1.1rem;
+  }
+
+  .beliefs li + li {
+    margin-top: 0.6rem;
+  }
+
+  .beliefs li::marker {
+    color: var(--color-accent);
   }
 
   .cta {
