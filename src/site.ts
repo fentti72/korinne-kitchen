@@ -21,14 +21,14 @@ export const site = {
   newsletterAction: '',
   instagram: '',
   nav: [
-    { href: '/how-to/', label: 'How-To' },
-    ...(features.classes ? [{ href: '/classes/', label: 'Classes' }] : []),
-    ...(features.bake ? [{ href: '/bake/', label: "What I'm Baking" }] : []),
     {
       href: '/recipes/',
       label: 'Recipes',
       children: recipeCategories.map((c) => ({ href: categoryHref(c.slug), label: c.label })),
     },
+    { href: '/how-to/', label: 'How-To' },
+    ...(features.classes ? [{ href: '/classes/', label: 'Classes' }] : []),
+    ...(features.bake ? [{ href: '/bake/', label: "What I'm Baking" }] : []),
     ...(features.gallery ? [{ href: '/gallery/', label: 'Gallery' }] : []),
     { href: '/about/', label: 'About' },
   ],
