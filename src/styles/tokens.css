@@ -11,22 +11,24 @@
   --color-espresso-soft: #5c4a40; /* secondary text */
   --color-accent: #5e6e43; /* sage green: buttons, calls to action, links */
   --color-accent-dark: #4a5735; /* button hover; links on oat */
-  --color-honey: #d9a441; /* small status badges only */
+  --color-honey: #d9a441; /* yellow accent: recipe step numbers, bullets on dark, badges */
   --color-honey-ink: #412402; /* text on honey */
   --color-sage: #7a8b5c; /* tag accents */
   --color-sage-dark: #4a5735; /* tag text */
   --color-sage-tint: #e3e8d8; /* tag background */
-  --color-white: #ffffff; /* button text only */
+  --color-white: #ffffff; /* cards, header, menus; button text */
 
   /* Semantic: surfaces */
   --bg: var(--color-flour);
-  --surface: var(--color-oat);
+  --surface: var(--color-oat); /* small fills: servings control, menu hover */
+  --card: var(--color-white); /* cards and boxes on the cream page */
+  --header-bg: var(--color-white);
   --surface-dark: var(--color-espresso);
   --line: var(--color-oat); /* dividers on flour */
   --line-strong: var(--color-espresso-soft); /* dividers and input borders on oat */
 
   /* Semantic: text */
-  --text: var(--color-espresso); /* 13.5:1 on flour, 10.9:1 on oat */
+  --text: var(--color-espresso); /* 13.5:1 on flour, 10.9:1 on oat, 15.1:1 on white */
   --text-muted: var(--color-espresso-soft); /* 7.5:1 on flour, 6.0:1 on oat */
   --text-on-dark: var(--color-flour); /* 13.5:1 on espresso */
   --text-on-dark-muted: var(--color-oat); /* 10.9:1 on espresso */
@@ -37,7 +39,7 @@
   --action-text: var(--color-white);
   --link: var(--color-accent); /* 4.9:1 on flour */
   --link-hover: var(--color-accent-dark); /* 6.9:1 on flour */
-  --link-on-surface: var(--color-accent-dark); /* 5.6:1 on oat (the lighter sage is only 4.0:1) */
+  --link-on-surface: var(--color-accent-dark); /* on cards: 7.8:1 on white */
   --link-on-dark: var(--color-flour); /* sage is only 2.7:1 on espresso */
   --focus: var(--color-accent);
 
@@ -54,6 +56,9 @@
   --tag-bg: var(--color-sage-tint);
   --tag-text: var(--color-sage-dark); /* 6.2:1 (sage itself is only 3.0:1) */
   --tag-accent: var(--color-sage);
+  --highlight: var(--color-honey); /* yellow accent fill */
+  --highlight-text: var(--color-honey-ink); /* 6.3:1 on honey */
+  --highlight-on-dark: var(--color-honey); /* 6.7:1 on espresso */
 
   /* Type */
   --font-sans: 'DM Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;

@@ -172,9 +172,10 @@ a.tag:hover {
   padding: 0;
 }
 
-/* Cards and other oat surfaces: links switch to the darker green for contrast. */
+/* Cards and boxes: white on the cream page, with a hairline edge. Links use the darker green. */
 .surface {
-  background: var(--surface);
+  background: var(--card);
+  border: 1px solid var(--line);
   border-radius: var(--radius);
 }
 
