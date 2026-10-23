@@ -5,7 +5,7 @@
  */
 :root {
   /* Palette */
-  --color-flour: #f7f1e8; /* main page background */
+  --color-flour: #f7f1e8; /* cream: cards and boxes */
   --color-oat: #e8d9c4; /* cards, section backgrounds, dividers */
   --color-espresso: #2e2420; /* body text, headings, dark sections */
   --color-espresso-soft: #5c4a40; /* secondary text */
@@ -16,15 +16,15 @@
   --color-sage: #7a8b5c; /* tag accents */
   --color-sage-dark: #4a5735; /* tag text */
   --color-sage-tint: #e3e8d8; /* tag background */
-  --color-white: #ffffff; /* cards, header, menus; button text */
+  --color-white: #ffffff; /* page background, header, menus; button text */
 
   /* Semantic: surfaces */
-  --bg: var(--color-flour);
+  --bg: var(--color-white);
   --surface: var(--color-oat); /* small fills: servings control, menu hover */
-  --card: var(--color-white); /* cards and boxes on the cream page */
+  --card: var(--color-flour); /* cards and boxes on the white page */
   --header-bg: var(--color-white);
   --surface-dark: var(--color-espresso);
-  --line: var(--color-oat); /* dividers on flour */
+  --line: var(--color-oat); /* dividers and card edges */
   --line-strong: var(--color-espresso-soft); /* dividers and input borders on oat */
 
   /* Semantic: text */
@@ -39,7 +39,7 @@
   --action-text: var(--color-white);
   --link: var(--color-accent); /* 4.9:1 on flour */
   --link-hover: var(--color-accent-dark); /* 6.9:1 on flour */
-  --link-on-surface: var(--color-accent-dark); /* on cards: 7.8:1 on white */
+  --link-on-surface: var(--color-accent-dark); /* on cards: 6.9:1 on cream */
   --link-on-dark: var(--color-flour); /* sage is only 2.7:1 on espresso */
   --focus: var(--color-accent);
 
